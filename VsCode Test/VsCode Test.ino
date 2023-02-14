@@ -11,6 +11,31 @@
 #define button 4
 #define enR 10
 
+//#include <WiFi.h>
+
+const char* ssid = "REPLACE_WITH_YOUR_SSID";
+const char* password = "REPLACE_WITH_YOUR_PASSWORD";
+
+// Set web server port number to 80
+//WiFiServer server(80);
+
+// Variable to store the HTTP request
+//String header;
+
+// Auxiliar variables to store the current output state
+//String output26State = "off";
+//String output27State = "off";
+
+// Assign output variables to GPIO pins
+const int output26 = 26;
+const int output27 = 27;
+
+// Current time
+unsigned long currentTime = millis();
+// Previous time
+unsigned long previousTime = 0; 
+// Define timeout time in milliseconds (example: 2000ms = 2s)
+const long timeoutTime = 2000;
 int rotDirection = 0;
 int pressed = false;
 
@@ -29,6 +54,7 @@ void setup() {
   digitalWrite(in2, HIGH);
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
+  Serial.begin(9600);
 }
 
 void loop() {

@@ -1,3 +1,5 @@
 {
-    "arduino.path": "C:\\Users\\andre\\OneDrive\\Documents\\Arduino\\arduino-cli_0.30.0_Windows_64bit\\arduino-cli.exe"
+    "arduino.path": "C:\\Program Files\\Arduino CLI",
+    "arduino.commandPath": "arduino-cli.exe",
+    "arduino.useArduinoCli": true
 }
