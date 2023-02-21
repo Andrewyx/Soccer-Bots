@@ -3,32 +3,13 @@
     by Dejan Nedelkovski, www.HowToMechatronics.com
 */
 
-#define enA 9
-#define in1 6
-#define in2 7
-#define in3 11
-#define in4 3
-#define button 4
-#define enR 10
-
-//#include <WiFi.h>
-
-const char* ssid = "REPLACE_WITH_YOUR_SSID";
-const char* password = "REPLACE_WITH_YOUR_PASSWORD";
-
-// Set web server port number to 80
-//WiFiServer server(80);
-
-// Variable to store the HTTP request
-//String header;
-
-// Auxiliar variables to store the current output state
-//String output26State = "off";
-//String output27State = "off";
-
-// Assign output variables to GPIO pins
-const int output26 = 26;
-const int output27 = 27;
+//#define enA 
+#define MotorA1 1
+#define MotorA2 2
+#define MotorB1 3
+#define MotorB2 4
+//#define button 4
+//#define enR 10
 
 // Current time
 unsigned long currentTime = millis();
@@ -42,18 +23,18 @@ int pressed = false;
 void setup() {
   pinMode(enA, OUTPUT);
   pinMode(enR, OUTPUT);
-  pinMode(in1, OUTPUT);
-  pinMode(in2, OUTPUT);
-  pinMode(in3, OUTPUT);
-  pinMode(in4, OUTPUT);
+  pinMode(MotorA1, OUTPUT);
+  pinMode(MotorA2, OUTPUT);
+  pinMode(MotorB1, OUTPUT);
+  pinMode(MotorB2, OUTPUT);
 
   
   pinMode(button, INPUT);
   // Set initial rotation direction
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, HIGH);
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, HIGH);
+  digitalWrite(MotorA1, LOW);
+  digitalWrite(MotorA2, HIGH);
+  digitalWrite(MotorB1, LOW);
+  digitalWrite(MotorB2, HIGH);
   Serial.begin(9600);
 }
 
@@ -72,19 +53,19 @@ void loop() {
 
   // If button is pressed - change rotation direction
   if (pressed == true  & rotDirection == 0) {
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, LOW);
-    digitalWrite(in3, HIGH);
-    digitalWrite(in4, LOW);
+    digitalWrite(MotorA1, HIGH);
+    digitalWrite(MotorA2, LOW);
+    digitalWrite(MotorB1, HIGH);
+    digitalWrite(MotorB2, LOW);
     rotDirection = 1;
     delay(20);
   }
   // If button is pressed - change rotation direction
   if (pressed == false & rotDirection == 1) {
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    digitalWrite(in3, LOW);
-    digitalWrite(in4, HIGH);
+    digitalWrite(MotorA1, LOW);
+    digitalWrite(MotorA2, HIGH);
+    digitalWrite(MotorB1, LOW);
+    digitalWrite(MotorB2, HIGH);
     rotDirection = 0;
     delay(20);
   }
