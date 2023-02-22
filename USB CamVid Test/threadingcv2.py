@@ -1,159 +1,103 @@
-import threading
+# importing required libraries 
+import cv2 
+import time 
+from threading import Thread # library for implementing multi-threaded processing 
 
-import cv2
+#trained model for faces added
+face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
+# defining a helper class for implementing multi-threaded processing 
+class WebcamStream :
+    def __init__(self, stream_id=0):
+        self.stream_id = stream_id   # default is 0 for primary camera 
+        
+        # opening video capture stream 
+        self.vcap = cv2.VideoCapture(self.stream_id)
 
-class Camera(object):
-    """
-    Base Camera object
-    """
+        self.vcap.set(3, 640)
+        self.vcap.set(4, 480)
 
-    def __init__(self):
-        self._cam = None
-        self._frame = None
-        self._frame_width = None
-        self._frame_height = None
-        self._ret = False
+        if self.vcap.isOpened() is False :
+            print("[Exiting]: Error accessing webcam stream.")
+            exit(0)
+        fps_input_stream = int(self.vcap.get(5))
+        print("FPS of webcam hardware/input stream: {}".format(fps_input_stream))
+            
+        # reading a single frame from vcap stream for initializing 
+        self.grabbed , self.frame = self.vcap.read()
+        if self.grabbed is False :
+            print('[Exiting] No more frames to read')
+            exit(0)
 
-        self.auto_undistortion = False
-        self._camera_matrix = None
-        self._distortion_coefficients = None
+        # self.stopped is set to False when frames are being read from self.vcap stream 
+        self.stopped = True 
 
-        self._is_running = False
+        # reference to the thread for reading next available frame from input stream 
+        self.t = Thread(target=self.update, args=())
+        self.t.daemon = True # daemon threads keep running in the background while the program is executing 
+        
+    # method for starting the thread for grabbing next available frame in input stream 
+    def start(self):
+        self.stopped = False
+        self.t.start() 
 
-    def _init_camera(self):
-        """
-        This is the first for creating our camera
-        We should override this!
-        """
-
-        pass
-
-    def start_camera(self):
-        """
-        Start the running of the camera, without this we can't capture frames
-        Camera runs on a separate thread so we can reach a higher FPS
-        """
-
-        self._init_camera()
-        self._is_running = True
-        threading.Thread(target=self._update_camera, args=()).start()
-
-    def _read_from_camera(self):
-        """
-        This method is responsible for grabbing frames from the camera
-        We should override this!
-        """
-
-        if self._cam is None:
-            raise Exception("Camera is not started!")
-
-    def _update_camera(self):
-        """
-        Grabs the frames from the camera
-        """
-
-        while True:
-            if self._is_running:
-                self._ret, self._frame = self._read_from_camera()
-            else:
+    # method for reading next frame 
+    def update(self):
+        while True :
+            if self.stopped is True :
                 break
+            self.grabbed , self.frame = self.vcap.read()
+            if self.grabbed is False :
+                print('[Exiting] No more frames to read')
+                self.stopped = True
+                break 
+        self.vcap.release()
 
-    def get_frame_width_and_height(self):
-        """
-        Returns the width and height of the grabbed images
-        :return (int int): width and height
-        """
-
-        return self._frame_width, self._frame_height
-
+    # method for returning latest read frame 
     def read(self):
-        """
-        With this you can grab the last frame from the camera
-        :return (boolean, np.array): return value and frame
-        """
-        return self._ret, self._frame
+        return self.frame
 
-    def release_camera(self):
-        """
-        Stop the camera
-        """
-
-        self._is_running = False
-
-    def is_running(self):
-        return self._is_running
-
-    def set_calibration_matrices(self, camera_matrix, distortion_coefficients):
-        self._camera_matrix = camera_matrix
-        self._distortion_coefficients = distortion_coefficients
-
-    def activate_auto_undistortion(self):
-        self.auto_undistortion = True
-
-    def deactivate_auto_undistortion(self):
-        self.auto_undistortion = False
-
-    def _undistort_image(self, image):
-        if self._camera_matrix is None or self._distortion_coefficients is None:
-            import warnings
-            warnings.warn("Undistortion has no effect because <camera_matrix>/<distortion_coefficients> is None!")
-            return image
-
-        h, w = image.shape[:2]
-        new_camera_matrix, roi = cv2.getOptimalNewCameraMatrix(self._camera_matrix,
-                                                               self._distortion_coefficients, (w, h),
-                                                               1,
-                                                               (w, h))
-        undistorted = cv2.undistort(image, self._camera_matrix, self._distortion_coefficients, None,
-                                    new_camera_matrix)
-        return undistorted
+    # method called to stop reading frames 
+    def stop(self):
+        self.stopped = True 
 
 
-class WebCamera(Camera):
-    """
-    Simple Webcamera
-    """
+# initializing and starting multi-threaded webcam capture input stream 
+webcam_stream = WebcamStream(stream_id=0) #  stream_id = 0 is for primary camera 
+webcam_stream.start()
 
-    def __init__(self, video_src=0):
-        """
-        :param video_src (int): camera source code (it should be 0 or 1, or the filename)
-        """
+# processing frames in input stream
+num_frames_processed = 0 
+start = time.time()
+while True :
+    if webcam_stream.stopped is True :
+        break
+    else :
+        frame = webcam_stream.read()
+         # Convert to grayscale
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Detect the faces
+        faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        # Draw the rectangle around each face
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (100, 0, 0), 2)     
 
-        super().__init__()
-        self._video_src = video_src
+    # adding a delay for simulating time taken for processing a frame 
+    delay = 0.03 # delay value in seconds. so, delay=1 is equivalent to 1 second 
+    time.sleep(delay) 
+    num_frames_processed += 1 
 
-    def _init_camera(self):
-        super()._init_camera()
-        self._cam = cv2.VideoCapture(self._video_src)
-        self._ret, self._frame = self._cam.read()
-        if not self._ret:
-            raise Exception("No camera feed")
-        self._frame_height, self._frame_width, c = self._frame.shape
-        return self._ret
+    cv2.imshow('frame' , frame)
+    key = cv2.waitKey(1)
+    if key == ord('q'):
+        break
+end = time.time()
+webcam_stream.stop() # stop the webcam stream 
 
-    def _read_from_camera(self):
-        super()._read_from_camera()
-        self._ret, self._frame = self._cam.read()
-        if self._ret:
-            if self.auto_undistortion:
-                self._frame = self._undistort_image(self._frame)
-            return True, self._frame
-        else:
-            return False, None
+# printing time elapsed and fps 
+elapsed = end-start
+fps = num_frames_processed/elapsed 
+print("FPS: {} , Elapsed Time: {} , Frames Processed: {}".format(fps, elapsed, num_frames_processed))
 
-    def release_camera(self):
-        super().release_camera()
-        self._cam.release()
-
-# Example usage:
-if __name__ == "__main__":
-    webcam = WebCamera(video_src=0)
-    webcam.start_camera()
-    while True:
-        ret, frame = webcam.read()
-        cv2.imshow("webcam test", frame)
-        key = cv2.waitKey(1)
-        if key == 27:
-            break
-    webcam.release_camera()
+# closing all windows 
+cv2.destroyAllWindows()
