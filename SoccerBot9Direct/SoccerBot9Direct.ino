@@ -13,13 +13,13 @@
 #include <WebServer.h>
 
 /* Put your SSID & Password */
-const char* ssid = "ESP32";  // Enter SSID here
-const char* password = "12345678";  //Enter Password here
+const char* ssid = "McRoberts_Guest";  // Enter SSID here
+const char* password = "mcrob6600";  //Enter Password here
 
 /* Put IP Address details */
-IPAddress local_ip(192,168,1,1);
-IPAddress gateway(192,168,1,1);
-IPAddress subnet(255,255,255,0);
+//IPAddress local_ip(192,168,1,1);
+//IPAddress gateway(192,168,1,1);
+//IPAddress subnet(255,255,255,0);
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -61,19 +61,18 @@ void setup() {
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Connecting to ");
   Serial.println(ssid);
-
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP(ssid, password);
-  WiFi.softAPConfig(local_ip, gateway, subnet);
-  delay(100);
-
   WiFi.begin(ssid, password);
-
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  // Print local IP address and start web server
+  Serial.println("");
+  Serial.println("WiFi connected.");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
   server.begin();
 
-  if (ARDUINO_EVENT_WIFI_AP_START){
-    Serial.println("Access point initialized");
-  }
 }
 
 void loop(){
@@ -102,30 +101,54 @@ void loop(){
             client.println();
             
             // turns the GPIOs on and off
-            if (header.indexOf("GET /26/on") >= 0) {
+            if (header.indexOf("GET /NW") >= 0) {
               Serial.println("GPIO 26 on");
-              output26State = "on";
               analogWrite(MotorA1, 0);
               analogWrite(MotorA2, 255);
               
-            } else if (header.indexOf("GET /26/off") >= 0) {
+            } else if (header.indexOf("GET /N") >= 0) {
               Serial.println("GPIO 26 off");
-              output26State = "off";
+              
               analogWrite(MotorA1, 0);
-              analogWrite(MotorA2, 0);
+              analogWrite(MotorA2, 255);
+              analogWrite(MotorB1, 0);
+              analogWrite(MotorB2, 255);              
 
-            } else if (header.indexOf("GET /27/on") >= 0) {
+            } else if (header.indexOf("GET /NE") >= 0) {
               Serial.println("GPIO 27 on");
-              output27State = "on";
               analogWrite(MotorB1, 0);
               analogWrite(MotorB2, 255);
-            } else if (header.indexOf("GET /27/off") >= 0) {
+            } else if (header.indexOf("GET /W") >= 0) {
               Serial.println("GPIO 27 off");
-              output27State = "off";
-              analogWrite(MotorB1, 0);
+              analogWrite(MotorA1, 0);
+              analogWrite(MotorA2, 255);              
+              analogWrite(MotorB1, 255);
               analogWrite(MotorB2, 0);
-            }
+            } else if (header.indexOf("GET /E") >= 0) {
+              Serial.println("GPIO 27 off");
+              analogWrite(MotorA1, 255);
+              analogWrite(MotorA2, 0);              
+              analogWrite(MotorB1, 0);
+              analogWrite(MotorB2, 255);
+
+            } else if (header.indexOf("GET /Stop") >= 0) {
+              Serial.println("GPIO 27 off");
+              analogWrite(MotorA1, 0);
+              analogWrite(MotorA2, 0);
+              analogWrite(MotorB1, 0);
+              analogWrite(MotorB2, 0);              
             
+            } else if (header.indexOf("GET /Stop") >= 0) {
+              Serial.println("GPIO 27 off");
+              analogWrite(MotorA1, 255);
+              analogWrite(MotorA2, 0);
+              analogWrite(MotorB1, 255);
+              analogWrite(MotorB2, 0);              
+            }             
+                                  
+            
+
+
             // Display the HTML web page
             client.println("<!DOCTYPE html><html>");
             client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
@@ -140,23 +163,21 @@ void loop(){
             // Web Page Heading
             client.println("<body><h1>ESP32 Web Server</h1>");
             
-
-            
             client.println( "<table> "); 
             
-            client.println( "<td><p><a href=\"/NW?dir=1\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">\\</button></a></p> ");
-            client.println( "<td><p><a href=\"/N?dir=2\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">^</button></a></p> ");
-            client.println( "<td><p><a href=\"/NE?dir=3\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">/</button></a></p> ");
+            client.println( "<td><p><a href=\"/NW\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">\\</button></a></p> ");
+            client.println( "<td><p><a href=\"/N\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">^</button></a></p> ");
+            client.println( "<td><p><a href=\"/NE\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">/</button></a></p> ");
             client.println( "<tr>");
 
-            client.println( "<td><p><a href=\"/W?dir=4\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\"> < </button></a></p> ");
-            client.println( "<td><p><a href=\"/Stop?dir=5\"><button style=\"width:100;height:100;font-size:40px;\" class=\"button\">Stop</button></a></p> ");
-            client.println( "<td><p><a href=\"/E?dir=6\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\"> > </button></a></p> ");
+            client.println( "<td><p><a href=\"/W\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\"> < </button></a></p> ");
+            client.println( "<td><p><a href=\"/Stop\"><button style=\"width:100;height:100;font-size:40px;\" class=\"button\">Stop</button></a></p> ");
+            client.println( "<td><p><a href=\"/E\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\"> > </button></a></p> ");
             client.println( "<tr>");
 
-            client.println( "<td><p><a href=\"/SW?dir=7\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">/</button></a></p> ");
-            client.println( "<td><p><a href=\"/S?dir=8\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">v</button></a></p> ");
-            client.println( "<td><p><a href=\"/SE?dir=9\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">\\</button></a></p> ");
+            client.println( "<td><p><a href=\"/SW\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">/</button></a></p> ");
+            client.println( "<td><p><a href=\"/S\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">v</button></a></p> ");
+            client.println( "<td><p><a href=\"/SE\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">\\</button></a></p> ");
             
             client.println( "</table> "); 
             client.println( "</body></html>");
