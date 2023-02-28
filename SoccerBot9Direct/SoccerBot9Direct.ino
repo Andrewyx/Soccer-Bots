@@ -13,8 +13,11 @@
 #include <WebServer.h>
 
 /* Put your SSID & Password */
-const char* ssid = "McRoberts_Guest";  // Enter SSID here
-const char* password = "mcrob6600";  //Enter Password here
+//const char* ssid = "McRoberts_Guest";  // Enter SSID here
+//const char* password = "mcrob6600";  //Enter Password here
+
+const char* ssid = "ThatOneHouse";  // Enter SSID here
+const char* password = "Wz6960025";  //Enter Password here
 
 /* Put IP Address details */
 //IPAddress local_ip(192,168,1,1);
@@ -158,12 +161,13 @@ void loop(){
             client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
             client.println(".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;");
             client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
+            client.println("table.center { margin-left:auto; margin-right:auto;} body {text-align:center;}");
             client.println(".button2 {background-color: #555555;}</style></head>");
             
             // Web Page Heading
             client.println("<body><h1>ESP32 Web Server</h1>");
             
-            client.println( "<table> "); 
+            client.println( "<table class=\"center\"> "); 
             
             client.println( "<td><p><a href=\"/NW\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">\\</button></a></p> ");
             client.println( "<td><p><a href=\"/N\"><button style=\"width:100;height:100;font-size:100px;\" class=\"button\">^</button></a></p> ");

@@ -1,0 +1,115 @@
+<html>
+
+<head>
+    <title>ESP Web Server</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+    <style>
+        html {
+            font-family: Arial;
+            display: inline-block;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 3.0rem;
+        }
+
+        p {
+            font-size: 3.0rem;
+        }
+
+        body {
+            max-width: 600px;
+            margin: 0px auto;
+            padding-bottom: 25px;
+        }
+
+        .button {
+            position: relative;
+            display: inline-block;
+            width: 120px;
+            height: 68px
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>ESP Web Server</h2>
+    %BUTTONPLACEHOLDER%
+
+    <script>
+        function toggleCheckbox(element) {
+            var xhr = new XMLHttpRequest();
+
+            let button = document.querySelector("#button");
+
+            let timerID;
+            let counter = 0;
+
+            let pressHoldEvent = new CustomEvent("pressHold");
+
+            // Increase or decreae value to adjust how long
+            // one should keep pressing down before the pressHold
+            // event fires
+            let pressHoldDuration = 50;
+
+            // Listening for the mouse and touch events    
+            button.addEventListener("mousedown", pressingDown, false);
+            button.addEventListener("mouseup", notPressingDown, false);
+            button.addEventListener("mouseleave", notPressingDown, false);
+
+            button.addEventListener("touchstart", pressingDown, false);
+            button.addEventListener("touchend", notPressingDown, false);
+
+            // Listening for our custom pressHold event
+            button.addEventListener("pressHold", doSomething, false);
+
+            function pressingDown(e) {
+                // Start the timer
+                requestAnimationFrame(timer);
+
+                e.preventDefault();
+
+                console.log("Pressing!");
+            }
+
+            function notPressingDown(e) {
+                // Stop the timer
+                cancelAnimationFrame(timerID);
+                counter = 0;
+
+                console.log("Not pressing!");
+            }
+
+            //
+            // Runs at 60fps when you are pressing down
+            //
+            function timer() {
+                console.log("Timer tick!");
+
+
+
+                if (counter < pressHoldDuration) {
+                    timerID = requestAnimationFrame(timer);
+                    xhr.open("GET", "/update?output=" + element.id + "&state=1", true);
+                    counter++;
+                } else {
+                    console.log("Press threshold reached!");
+                    xhr.open("GET", "/update?output=" + element.id + "&state=0", true);
+                    button.dispatchEvent(pressHoldEvent);
+                }
+            }
+
+            function doSomething(e) {
+                console.log("pressHold event fired!");
+            }
+
+            xhr.send();
+        }
+    </script>
+
+</body>
+
+</html>

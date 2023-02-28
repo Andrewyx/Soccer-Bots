@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:,">
+
+    <style>
+        html {
+            font-family: Helvetica;
+            display: inline-block;
+            margin: 0px auto;
+            text-align: center;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 16px 40px;
+            text-decoration: none;
+            font-size: 30px;
+            margin: 2px;
+            cursor: pointer;
+        }
+
+        .button2 {
+            background-color: #555555;
+        }
+        table.center {
+            margin-left:auto; 
+            margin-right:auto;
+        }
+        body {text-align:center;}
+
+    </style>
+</head>
+
+// Web Page Heading
+
+<body>
+    <h1>ESP32 Web Server</h1>
+
+    <table class="center">
+
+        <td>
+            <p><a href="/NW"><button style="width:100;height:100;font-size:100px;" class="button">\</button></a></p>
+        <td>
+            <p><a href="/N"><button style="width:100;height:100;font-size:100px;" class="button">^</button></a></p>
+        <td>
+            <p><a href="/NE"><button style="width:100;height:100;font-size:100px;" class="button">/</button></a></p>
+            <tr>
+
+                <td>
+                    <p><a href="/W"><button style="width:100;height:100;font-size:100px;" class="button">
+                                < </button></a></p>
+                <td>
+                    <p><a href="/Stop"><button style="width:100;height:100;font-size:40px;"
+                                class="button">Stop</button></a></p>
+                <td>
+                    <p><a href="/E"><button style="width:100;height:100;font-size:100px;" class="button"> >
+                            </button></a></p>
+            <tr>
+
+                <td>
+                    <p><a href="/SW"><button style="width:100;height:100;font-size:100px;" class="button">/</button></a>
+                    </p>
+                <td>
+                    <p><a href="/S"><button style="width:100;height:100;font-size:100px;" class="button">v</button></a>
+                    </p>
+                <td>
+                    <p><a href="/SE"><button style="width:100;height:100;font-size:100px;" class="button">\</button></a>
+                    </p>
+
+    </table>
+</body>
+
+</html>
