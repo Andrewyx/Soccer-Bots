@@ -54,6 +54,10 @@ const char index_html[] PROGMEM = R"rawliteral(
     <h1>ESP Pushbutton Web Server</h1>
     <button class="button" onmousedown="toggleCheckbox('afor');" ontouchstart="toggleCheckbox('afor');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">MOTOR FORWARD</button>
     <button class="button" onmousedown="toggleCheckbox('aback');" ontouchstart="toggleCheckbox('aback');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">MOTOR BACKWARD</button>
+    <button class="button" onmousedown="toggleCheckbox('left');" ontouchstart="toggleCheckbox('left');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">LEFT</button>
+    <button class="button" onmousedown="toggleCheckbox('right');" ontouchstart="toggleCheckbox('right');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">RIGHT</button>
+
+
 
    <script>
    function toggleCheckbox(x) {
@@ -114,16 +118,37 @@ void setup(){
     digitalWrite(MotorB1, HIGH);
     digitalWrite(MotorB2, LOW);  
 
-    Serial.println("Motor Off!");
+    Serial.println("Motor Backwards!");
     request->send(200, "text/plain", "ok");
   });
+
   server.on("/off", HTTP_GET, [] (AsyncWebServerRequest *request) {
     digitalWrite(MotorA1, LOW);
     digitalWrite(MotorA2, LOW);
     digitalWrite(MotorB1, LOW);
-    digitalWrite(MotorB2, LOW); 
+    digitalWrite(MotorB2, LOW);  
 
     Serial.println("Motor Off!");
+    request->send(200, "text/plain", "ok");
+  });
+
+  server.on("/left", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    digitalWrite(MotorA1, LOW);
+    digitalWrite(MotorA2, HIGH);
+    digitalWrite(MotorB1, LOW);
+    digitalWrite(MotorB2, HIGH);  
+
+    Serial.println("Motor Turning Left!");
+    request->send(200, "text/plain", "ok");
+  });  
+
+  server.on("/right", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    digitalWrite(MotorA1, HIGH);
+    digitalWrite(MotorA2, LOW);
+    digitalWrite(MotorB1, HIGH);
+    digitalWrite(MotorB2, LOW); 
+
+    Serial.println("Motor Turning Right!");
     request->send(200, "text/plain", "ok");
   });
   
