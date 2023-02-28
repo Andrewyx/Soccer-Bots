@@ -10,8 +10,8 @@ const char* password = "mcrob6600";
 
 const int MotorA1 = 18;
 const int MotorA2 = 19;
-const int MotorB1 21;
-const int MotorB2 22;
+const int MotorB1 = 21;
+const int MotorB2 = 22;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -129,9 +129,6 @@ void setup(){
   
   server.onNotFound(notFound);
   server.begin();
-
-
-
 
 }
 
