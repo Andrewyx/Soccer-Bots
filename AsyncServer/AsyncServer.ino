@@ -3,10 +3,13 @@
 #include <ESPAsyncWebServer.h>
 
 // Replace with your network credentials
-const char* ssid = "McRoberts_Guest";
-const char* password = "mcrob6600";
+//const char* ssid = "McRoberts_Guest";
+//const char* password = "mcrob6600";
 //const char* ssid = "ThatOneHouse";
 //const char* password = "Wz6960025";
+
+const char* ssid = "AYM";
+const char* password = "andrewsboard";
 
 const int MotorA1 = 18;
 const int MotorA2 = 19;
@@ -15,6 +18,7 @@ const int MotorB2 = 22;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
+
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -70,6 +74,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 </html>)rawliteral";
 
 
+
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
 }
@@ -90,13 +95,16 @@ void setup(){
 
 
   // Connect to Wi-Fi
-  WiFi.begin(ssid, password);
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP(ssid, password);
+  /*
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
   }
+  */
   // Print ESP Local IP Address
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.softAPIP());
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", index_html);
