@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
@@ -18,9 +19,10 @@ const int MotorB2 = 22;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
+<<<<<<< Updated upstream
+=======
 AsyncWebSocket ws("/ws");
-
-
+>>>>>>> Stashed changes
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -28,7 +30,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <title>ESP Pushbutton Web Server</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-      body { font-family: Arial; text-align: center; margin:0px auto; padding-top: 30px;}
+      body { font-family: Arial; text-align: center; margin:0px auto;height: 100%; overflow: hidden; padding-top: 30px;}
       .button {
         padding: 10px 20px;
         font-size: 24px;
@@ -54,6 +56,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         box-shadow: 0 4px #666;
         transform: translateY(2px);
       }
+
     </style>
   </head>
   <body>
@@ -63,7 +66,13 @@ const char index_html[] PROGMEM = R"rawliteral(
     <button class="button" onmousedown="toggleCheckbox('left');" ontouchstart="toggleCheckbox('left');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">LEFT</button>
     <button class="button" onmousedown="toggleCheckbox('right');" ontouchstart="toggleCheckbox('right');" onmouseup="toggleCheckbox('off');" ontouchend="toggleCheckbox('off');">RIGHT</button>
 
-
+    <p style="text-align: center;">
+        X: <span id="x_coordinate"> </span>
+        Y: <span id="y_coordinate"> </span>
+        Speed: <span id="speed"> </span> %
+        Angle: <span id="angle"> </span>
+    </p>
+    <canvas id="canvas" name="game"></canvas>
 
    <script>
    function toggleCheckbox(x) {
@@ -72,10 +81,8 @@ const char index_html[] PROGMEM = R"rawliteral(
      xhr.send();
    }
   </script>
-
     <script>
-            
-        var connection = new WebSocket('ws://' + "192.168.4.1" + '/ws');
+        var connection = new WebSocket('ws://' + "192.168.4.1" + '/ws',);
         connection.onopen = function () {
             connection.send('Connect ' + new Date());
         };
@@ -92,9 +99,14 @@ const char index_html[] PROGMEM = R"rawliteral(
             data = JSON.stringify(data);
             console.log(data);
             connection.send(data);
-         
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/" + data, true);
+            xhr.send();            
         }
 
+
+    </script>
+    <script>
         var canvas, ctx;
 
         window.addEventListener('load', () => {
@@ -248,6 +260,14 @@ const char index_html[] PROGMEM = R"rawliteral(
 void notFound(AsyncWebServerRequest *request);
 
 
+
+void notFound(AsyncWebServerRequest *request);
+
+<<<<<<< Updated upstream
+=======
+void notFound(AsyncWebServerRequest *request);
+>>>>>>> Stashed changes
+
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
 }
@@ -293,6 +313,7 @@ void setup(){
     Serial.println("Motor On!");
     request->send(200, "text/plain", "ok");
   });
+  
   server.on("/aback", HTTP_GET, [] (AsyncWebServerRequest *request) {
     digitalWrite(MotorA1, LOW);
     digitalWrite(MotorA2, HIGH);
