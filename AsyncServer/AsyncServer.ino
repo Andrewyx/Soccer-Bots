@@ -19,10 +19,7 @@ const int MotorB2 = 22;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
-<<<<<<< Updated upstream
-=======
 AsyncWebSocket ws("/ws");
->>>>>>> Stashed changes
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -260,13 +257,6 @@ const char index_html[] PROGMEM = R"rawliteral(
 void notFound(AsyncWebServerRequest *request);
 
 
-
-void notFound(AsyncWebServerRequest *request);
-
-<<<<<<< Updated upstream
-=======
-void notFound(AsyncWebServerRequest *request);
->>>>>>> Stashed changes
 
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
