@@ -3,6 +3,16 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
+#include <cmath>
+
+#include <sstream>
+#include <string.h>
+#include <fstream>
+
+#include <json/value.h>
+#include <json/json.h>
+
+
 // Replace with your network credentials
 //const char* ssid = "McRoberts_Guest";
 //const char* password = "mcrob6600";
@@ -17,13 +27,13 @@ const int MotorA2 = 19;
 const int MotorB1 = 21;
 const int MotorB2 = 22;
 
-int A1PWM;
+int rawIntData[4];
+
+int A1PWM, A2PWM, B1PWM, B2PWM;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
-
-
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML><html>
@@ -264,6 +274,12 @@ void notFound(AsyncWebServerRequest *request) {
 //use this
 void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
              void *arg, uint8_t *data, size_t len) {
+
+      //std::istream jsonString(data);
+      Json::Reader reader;
+      Json::Value cleanedData; 
+      char* dataAsString = (char*)data; 
+  
   switch (type) {
     case WS_EVT_CONNECT:
       Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str(), data);
@@ -273,19 +289,27 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
       break;
     case WS_EVT_DATA:
       //handle data here
-      Serial.printf("[%u] Data: %s\n", client, data);
-      //handleWebSocketMessage(arg, data, len);
-      break;
-    case WS_EVT_PONG:
-    case WS_EVT_ERROR:
-      break;
-  }
-}
+      //Serial.printf("[%u] Data: %s\n", client, data);
+      bool parseSuccess = reader.parse(dataAsString, cleanedData, false);
 
-void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
-  AwsFrameInfo *info = (AwsFrameInfo*)arg;
-  if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
-    data[len] = 0;
+      if(parseSuccess) {
+        Json::Value xValue = cleanedData["x"];
+        Json::Value yValue = cleanedData["y"];
+        Json::Value speedValue = cleanedData["speed"];
+        Json::Value angleValue = cleanedData["angle"];
+        Serial.printf("[%u] X: [%d] Y:[%d] Speed:[%d] Angle[%d]\n", client, xValue.asInt(), 
+              yValue.asInt(), speedValue.asInt(), angleValue.asInt());
+        rawIntData[0] = xValue.asInt();
+        rawIntData[1] = yValue.asInt();
+        rawIntData[2] = speedValue.asInt();
+        rawIntData[3] = angleValue.asInt();
+
+      }
+      else {
+        Serial.printf("Error: [%u]", reader.getFormattedErrorMessages());
+      }      
+      break;
+      
   }
 }
 
@@ -294,6 +318,11 @@ void initWebSocket() {
   server.addHandler(&ws);
 }
 
+
+
+void runMotor(){
+
+}
 
 void setup(){
   // Serial port for debugging purposes
@@ -375,7 +404,6 @@ void setup(){
     request->send(200, "text/plain", "ok");
   });
 
-  
   
   server.onNotFound(notFound);
   server.begin();
