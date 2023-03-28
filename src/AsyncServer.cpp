@@ -3,7 +3,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
-#include <cmath>
+#include <math.h>
 
 #include <sstream>
 #include <string.h>
@@ -11,6 +11,13 @@
 
 #include <json/value.h>
 #include <json/json.h>
+
+#include <Wire.h>
+#include <Adafruit_BusIO_Register.h>
+#include <Adafruit_MPU6050.h>
+#include <Adafruit_Sensor.h>
+
+Adafruit_MPU6050 mpu;
 
 
 // Replace with your network credentials
@@ -22,14 +29,16 @@
 const char* ssid = "AYM";
 const char* password = "andrewsboard";
 
-const int MotorA1 = 18;
-const int MotorA2 = 19;
-const int MotorB1 = 21;
-const int MotorB2 = 22;
+const int MotorA1 = 4;
+const int MotorA2 = 18;
+const int MotorB1 = 19;
+const int MotorB2 = 23;
 
 int rawIntData[4];
 
 int A1PWM, A2PWM, B1PWM, B2PWM;
+
+bool isMoving = false;
 
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
@@ -145,8 +154,6 @@ const char index_html[] PROGMEM = R"rawliteral(
         });
 
       
-
-
         var width, height, radius, x_orig, y_orig;
         function resize() {
             width = window.innerWidth;
@@ -211,12 +218,17 @@ const char index_html[] PROGMEM = R"rawliteral(
             paint = false;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             background();
+            var data = {"x":0,"y":0,"speed":0,"angle":0};
+            data = JSON.stringify(data);
+            console.log(data);
+            connection.send(data);
+
             joystick(width / 2, height / 3);
             document.getElementById("x_coordinate").innerText = 0;
             document.getElementById("y_coordinate").innerText = 0;
             document.getElementById("speed").innerText = 0;
             document.getElementById("angle").innerText = 0;
-
+            
         }
 
         function Draw(event) {
@@ -262,11 +274,20 @@ const char index_html[] PROGMEM = R"rawliteral(
 
                 send( x_relative,y_relative,speed,angle_in_degrees);
             }
+          else if(!paint){
+
+            send(0, 0, 0, 0);
+
+          }
         } 
     </script>
 
   </body>
 </html>)rawliteral";
+
+int DegreeInRadian(double x){
+  return x * (3.141592653589/180);;
+}
 
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
@@ -319,9 +340,92 @@ void initWebSocket() {
 }
 
 
+void calcMotor(){
+  int isForward = (int)(rawIntData[2] * sin(DegreeInRadian(rawIntData[3])));
+  int isTurn = (int)(rawIntData[2] * cos(DegreeInRadian(rawIntData[3])));
+
+  if(rawIntData[2] == 0 && rawIntData[3] == 0){
+    A1PWM = 0;
+    A2PWM = 0;
+    B1PWM = 0;
+    B2PWM = 0;
+    isMoving = false;
+  }
+  else{
+    isMoving = true;
+  }
+
+  if (isMoving){
+
+    if(isForward > 0){
+      A1PWM = map(isForward, 0, 100, 0, 255);
+      A2PWM = 0;
+      B1PWM = map(isForward, 0, 100, 0, 255);
+      B2PWM = 0;      
+    }
+    else if(isForward < 0){
+      A1PWM = 0;
+      A2PWM = map(abs(isForward), 0, 100, 0, 255);
+      B1PWM = 0;
+      B2PWM = map(abs(isForward), 0, 100, 0, 255);      
+    }
+
+    /*
+    if (isTurn > 0){
+      B1PWM = map(isTurn, 0, rawIntData[2], 0, 255);
+      B2PWM = 0;
+    }
+    else if(isTurn < 0){
+      B1PWM = 0;
+      B2PWM = map(abs(isTurn), 0, rawIntData[2], 0, 255);
+    }
+    */
+
+  }
+}
+
+void printMotorValues(){
+  Serial.print(A1PWM);
+  Serial.print(A2PWM);
+  Serial.print(B1PWM);
+  Serial.println(B2PWM);
+}
 
 void runMotor(){
+  calcMotor();
+  analogWrite(MotorA1, A1PWM);
+  analogWrite(MotorA2, A2PWM);
+  analogWrite(MotorB1, B1PWM);
+  analogWrite(MotorB2, B2PWM);  
+}
 
+void printGYRO(){
+  sensors_event_t a, g, temp;
+  mpu.getEvent(&a, &g, &temp);
+
+  Serial.print("Accelerometer ");
+  Serial.print("X: ");
+  Serial.print(a.acceleration.x, 1);
+  Serial.print(" m/s^2, ");
+  Serial.print("Y: ");
+  Serial.print(a.acceleration.y, 1);
+  Serial.print(" m/s^2, ");
+  Serial.print("Z: ");
+  Serial.print(a.acceleration.z, 1);
+  Serial.print(" m/s^2 ||");
+
+  Serial.print("Gyroscope ");
+  Serial.print("X: ");
+  Serial.print(g.gyro.x, 1);
+  Serial.print(" rps, ");
+  Serial.print("Y: ");
+  Serial.print(g.gyro.y, 1);
+  Serial.print(" rps, ");
+  Serial.print("Z: ");
+  Serial.print(g.gyro.z, 1);
+  Serial.println(" rps");
+
+  delay(100);
 }
 
 void setup(){
@@ -338,6 +442,13 @@ void setup(){
   digitalWrite(MotorB1, LOW);
   digitalWrite(MotorB2, LOW);
 
+
+  if (!mpu.begin()) {
+    Serial.println("Sensor init failed");
+    while (1)
+      yield();
+  }
+  Serial.println("Found a MPU-6050 sensor");
 
   // Connect to Wi-Fi
   WiFi.mode(WIFI_AP);
@@ -412,4 +523,6 @@ void setup(){
 
 void loop() {
   ws.cleanupClients();
+  //printGYRO();
+  runMotor();
 }
