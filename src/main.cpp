@@ -64,6 +64,7 @@ void setup(){
 
   initSPIFFS();
 
+  initgyro();
   if (!mpu.begin()) {
     Serial.println("Sensor init failed");
     while (1)
@@ -74,13 +75,9 @@ void setup(){
   // Connect to Wi-Fi
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid, password);
-
   // Print ESP Local IP Address
   Serial.println(WiFi.softAPIP());
-
   initWebSocket();
-
-
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
   });
@@ -136,6 +133,7 @@ void setup(){
     request->send(200, "text/plain", "ok");
   });
 
+  Serial.begin(9600);  
   
   server.onNotFound(notFound);
   server.begin();
@@ -145,5 +143,7 @@ void setup(){
 void loop() {
   ws.cleanupClients();
   //printGYRO();
+  rungyro();
   runMotor();
+  
 }

@@ -9,7 +9,7 @@ void calcMotor(){
   int isForward = (int)(rawIntData[2] * sin(DegreeInRadian(rawIntData[3])));
   int isTurn = (int)(rawIntData[2] * cos(DegreeInRadian(rawIntData[3])));
 
-  if(rawIntData[2] == 0 && rawIntData[3] == 0){
+  if(rawIntData[2] == 0){
     A1PWM = 0;
     A2PWM = 0;
     B1PWM = 0;
@@ -35,7 +35,7 @@ void calcMotor(){
       B2PWM = map(abs(isForward), 0, 100, 0, 255);      
     }
 
-    /*
+    
     if (isTurn > 0){
       B1PWM = map(isTurn, 0, rawIntData[2], 0, 255);
       B2PWM = 0;
@@ -44,7 +44,7 @@ void calcMotor(){
       B1PWM = 0;
       B2PWM = map(abs(isTurn), 0, rawIntData[2], 0, 255);
     }
-    */
+    
 
   }
 }
