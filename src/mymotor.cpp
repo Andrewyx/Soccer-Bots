@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include <math.h>
 #include "mymotor.h"
 

@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include <sstream>
 #include <string.h>
 #include <fstream>

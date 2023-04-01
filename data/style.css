@@ -1,4 +1,18 @@
-body { font-family: Arial; text-align: center; margin:0px auto; padding-top: 30px; height: 100%; overflow: hidden;}
+body {
+  font-family: Arial;
+  text-align: center;
+  margin: 0px auto;
+  padding-top: 30px;
+  height: 100%;
+  overflow: hidden;
+  background: #34e89e;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #0f3443, #34e89e);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #0f3443, #34e89e);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
 .button {
   padding: 10px 20px;
   font-size: 24px;
@@ -16,9 +30,13 @@ body { font-family: Arial; text-align: center; margin:0px auto; padding-top: 30p
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-}  
-.button:hover {background-color: #1f2e45}
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.button:hover {
+  background-color: #1f2e45
+}
+
 .button:active {
   background-color: #1f2e45;
   box-shadow: 0 4px #666;

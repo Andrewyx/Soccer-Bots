@@ -1,8 +1,6 @@
 #ifndef MYMOTOR_H
 #define MYMOTOR_H
 
-#include <Arduino.h>
-
 extern const int MotorA1;
 extern const int MotorA2;
 extern const int MotorB1;

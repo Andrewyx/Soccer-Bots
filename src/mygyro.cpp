@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <math.h>
 
 #include <Wire.h>
@@ -11,10 +12,12 @@ float RateRoll, RatePitch, RateYaw;
 float RateCalibrationRoll, RateCalibrationPitch, RateCalibrationYaw;
 int RateCalibrationNumber;
 float AccX, AccY, AccZ;
-float AngleRoll, AnglePitch;
+float AngleRoll, AnglePitch, AngleYaw;
 uint32_t LoopTimer;
 float KalmanAngleRoll=0, KalmanUncertaintyAngleRoll=2*2;
 float KalmanAnglePitch=0, KalmanUncertaintyAnglePitch=2*2;
+float KalmanAngleYaw=0, KalmanUncertaintyAngleYaw=2*2;
+
 float Kalman1DOutput[]={0,0};
 
 extern Adafruit_MPU6050 mpu;
@@ -67,6 +70,7 @@ void gyro_signals(void) {
 
   AngleRoll=atan(AccY/sqrt(AccX*AccX+AccZ*AccZ))*1/(3.142/180);
   AnglePitch=-atan(AccX/sqrt(AccY*AccY+AccZ*AccZ))*1/(3.142/180);
+  AngleYaw = atan(AccZ/sqrt(AccX*AccX+AccZ*AccZ))*1/(3.142/180);
 }
 
 void initgyro(){
@@ -95,15 +99,21 @@ void rungyro(){
   RateRoll-=RateCalibrationRoll;
   RatePitch-=RateCalibrationPitch;
   RateYaw-=RateCalibrationYaw;
+  kalman_1d(KalmanAngleYaw, KalmanUncertaintyAngleYaw, RateYaw, AngleYaw);
+  KalmanAngleYaw=Kalman1DOutput[0]; 
+  KalmanUncertaintyAngleYaw=Kalman1DOutput[1];
   kalman_1d(KalmanAngleRoll, KalmanUncertaintyAngleRoll, RateRoll, AngleRoll);
   KalmanAngleRoll=Kalman1DOutput[0]; 
   KalmanUncertaintyAngleRoll=Kalman1DOutput[1];
   kalman_1d(KalmanAnglePitch, KalmanUncertaintyAnglePitch, RatePitch, AnglePitch);
   KalmanAnglePitch=Kalman1DOutput[0]; 
   KalmanUncertaintyAnglePitch=Kalman1DOutput[1];
-  Serial.print("Roll Angle [°] ");
+
+  Serial.print("Yaw Angle: ");
+  Serial.print(KalmanAngleYaw);
+  Serial.print(" Roll Angle: ");
   Serial.print(KalmanAngleRoll);
-  Serial.print(" Pitch Angle [°] ");
+  Serial.print(" Pitch Angle: ");
   Serial.println(KalmanAnglePitch);
   while (micros() - LoopTimer < 4000);
   LoopTimer=micros();  

@@ -1,6 +1,5 @@
 #ifndef MYASYNCWEBSERVER_h
 #define MYASYNCWEBSERVER_h
-#include <Arduino.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>

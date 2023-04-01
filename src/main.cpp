@@ -133,8 +133,7 @@ void setup(){
     request->send(200, "text/plain", "ok");
   });
 
-  Serial.begin(9600);  
-  
+
   server.onNotFound(notFound);
   server.begin();
 
