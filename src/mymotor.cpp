@@ -3,14 +3,29 @@
 #include <math.h>
 #include "mymotor.h"
 
+int leftMotor, rightMotor;
+int isForward, isTurn;
+
 int DegreeInRadian(double x){
-  return x * (3.141592653589/180);;
+  return x * (3.1415/180);;
 }
 
 void calcMotor(){
-  int isForward = (int)(rawIntData[2] * sin(DegreeInRadian(rawIntData[3])));
-  int isTurn = (int)(rawIntData[2] * cos(DegreeInRadian(rawIntData[3])));
-
+  isForward = (int)(rawIntData[2] * sin(rawIntData[3]*PI/180));
+  isTurn = (int)(rawIntData[2] * cos(rawIntData[3]*PI/180));
+  
+  Serial.print("Cos: ");
+  Serial.print(cos(rawIntData[3]*PI/180));
+  Serial.print(" Speed: ");
+  Serial.print(rawIntData[2]);
+  Serial.print(" Angle: ");
+  Serial.print(rawIntData[3]);  
+  Serial.print(" ForwardVal: ");
+  Serial.print(isForward);
+  Serial.print(" TurnVal: ");
+  Serial.println(isTurn);
+  
+    
   if(rawIntData[2] == 0){
     A1PWM = 0;
     A2PWM = 0;
@@ -18,36 +33,53 @@ void calcMotor(){
     B2PWM = 0;
     isMoving = false;
   }
+
   else{
     isMoving = true;
   }
 
   if (isMoving){
 
-    if(isForward > 0){
-      A1PWM = map(isForward, 0, 100, 0, 255);
+    if(isForward < 0 && isTurn > 0){
+      leftMotor = abs(isForward) + abs(isTurn);
+      rightMotor = abs(isForward);
+      leftMotor = constrain(leftMotor, 0, 100);
+      rightMotor = constrain(rightMotor, 0, 100);
+      A1PWM = map(leftMotor, 0, 100, 0, 255);
       A2PWM = 0;
-      B1PWM = map(isForward, 0, 100, 0, 255);
+      B1PWM = map(rightMotor, 0, 100, 0, 255);
       B2PWM = 0;      
     }
-    else if(isForward < 0){
+    else if(isForward < 0 && isTurn < 0){
+      leftMotor = abs(isForward);
+      rightMotor = abs(isForward) + abs(isTurn);
+      leftMotor = constrain(leftMotor, 0, 100);
+      rightMotor = constrain(rightMotor, 0, 100);
+      A1PWM = map(leftMotor, 0, 100, 0, 255);
+      A2PWM = 0;
+      B1PWM = map(rightMotor, 0, 100, 0, 255);
+      B2PWM = 0;        
+    }
+    else if(isForward > 0 && isTurn > 0){
+      leftMotor = abs(isForward) + abs(isTurn);
+      rightMotor = abs(isForward);
+      leftMotor = constrain(leftMotor, 0, 100);
+      rightMotor = constrain(rightMotor, 0, 100);      
       A1PWM = 0;
-      A2PWM = map(abs(isForward), 0, 100, 0, 255);
+      A2PWM = map(leftMotor, 0, 100, 0, 255);
       B1PWM = 0;
-      B2PWM = map(abs(isForward), 0, 100, 0, 255);      
+      B2PWM = map(rightMotor, 0, 100, 0, 255);      
     }
-
-    
-    if (isTurn > 0){
-      B1PWM = map(isTurn, 0, rawIntData[2], 0, 255);
-      B2PWM = 0;
+    else if(isForward > 0 && isTurn < 0){
+      leftMotor = abs(isForward);
+      rightMotor = abs(isForward) + abs(isTurn);
+      leftMotor = constrain(leftMotor, 0, 100);
+      rightMotor = constrain(rightMotor, 0, 100);
+      A1PWM = 0;
+      A2PWM = map(leftMotor, 0, 100, 0, 255);
+      B1PWM = 0;        
+      B2PWM = map(rightMotor, 0, 100, 0, 255);
     }
-    else if(isTurn < 0){
-      B1PWM = 0;
-      B2PWM = map(abs(isTurn), 0, rawIntData[2], 0, 255);
-    }
-    
-
   }
 }
 
@@ -60,8 +92,9 @@ void printMotorValues(){
 
 void runMotor(){
   calcMotor();
+  //printMotorValues();
   analogWrite(MotorA1, A1PWM);
   analogWrite(MotorA2, A2PWM);
   analogWrite(MotorB1, B1PWM);
   analogWrite(MotorB2, B2PWM);  
-}
+} 

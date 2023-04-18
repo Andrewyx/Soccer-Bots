@@ -1,4 +1,5 @@
 var gateway = `ws://192.168.4.1/ws`;
+//var gateway = `ws://10.11.26.182/ws`;
 var connection;
 window.addEventListener('load', onLoad);
 
