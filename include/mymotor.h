@@ -14,5 +14,8 @@ int DegreeInRadian(double x);
 void calcMotor();
 void printMotorValues();
 void runMotor();
+void initL298N();
+void initServoLib();
+void runButlerMotor();
 
 #endif

@@ -10,10 +10,6 @@
 #include "myasyncwebserver.h"
 #include "mymotor.h"
 
-
-
-
-
 const int MotorA1 = 4;
 const int MotorA2 = 18;
 const int MotorB1 = 19;
@@ -22,7 +18,6 @@ const int MotorB2 = 23;
 int rawIntData[4];
 
 int A1PWM, A2PWM, B1PWM, B2PWM;
-
 bool isMoving = false;
 
 AsyncWebServer server(80);
@@ -64,20 +59,10 @@ void setup(){
   // Serial port for debugging purposes
   Serial.begin(115200);
 
-  pinMode(MotorA1, OUTPUT);
-  pinMode(MotorA2, OUTPUT);
-  pinMode(MotorB1, OUTPUT);
-  pinMode(MotorB2, OUTPUT);
-
-  digitalWrite(MotorA1, LOW);
-  digitalWrite(MotorA2, LOW);
-  digitalWrite(MotorB1, LOW);
-  digitalWrite(MotorB2, LOW);
-
+  initL298N();
   initSPIFFS();
   //initWiFiSTA();
   initWifiAP();
-
   initWebSocket();
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
