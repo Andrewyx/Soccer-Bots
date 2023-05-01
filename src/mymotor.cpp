@@ -13,18 +13,17 @@ int DegreeInRadian(double x){
 
 void initServoLib(){
   // 16 servo objects can be created on the ESP32
-  
-  int pos = 0;    // variable to store the servo position
   // Recommended PWM GPIO pins on the ESP32 include 2,4,12-19,21-23,25-27,32-33   
-  	// Allow allocation of all timers
+  // Allow allocation of all timers
+	leftServo.attach(MotorA1, 1000, 2000);
+  rightServo.attach(MotorB1, 1000, 2000);  
 	ESP32PWM::allocateTimer(0);
 	ESP32PWM::allocateTimer(1);
 	ESP32PWM::allocateTimer(2);
 	ESP32PWM::allocateTimer(3);
 	leftServo.setPeriodHertz(50);
   rightServo.setPeriodHertz(50);
-	leftServo.attach(MotorA1, 500, 2400);
-  rightServo.attach(MotorB1, 500, 2400);
+
 
 }
 
@@ -41,23 +40,27 @@ void runButlerMotor(){
   Serial.print(" ForwardVal: ");
   Serial.print(isForward);
   Serial.print(" TurnVal: ");
-  Serial.println(isTurn);
+  Serial.print(isTurn);
   
     
   if (rawIntData[2] == 0){
     leftServo.write(90);
     rightServo.write(90);
-  }  
-  else {
-      leftMotor = abs(isForward) + abs(isTurn);
-      rightMotor = abs(isForward);
-      leftMotor = constrain(leftMotor, 0, 100);
-      rightMotor = constrain(rightMotor, 0, 100);
-      leftMotor = map(leftMotor, -100, 100, 0, 180);
-      rightMotor = map(rightMotor, -100, 100, 0, 180);
-      leftServo.write(leftMotor);
-      rightServo.write(rightMotor);    
+    Serial.println(" Not Driving");
   }
+
+  else {
+      leftMotor = isForward + isTurn;
+      rightMotor = isForward - isTurn;
+      leftMotor = constrain(leftMotor, -100, 100);
+      rightMotor = constrain(rightMotor, -100, 100);
+      leftMotor = map(leftMotor, -100, 100, 60, 130);
+      rightMotor = map(rightMotor, -100, 100, 60, 130);
+      leftServo.write(leftMotor);
+      rightServo.write(rightMotor);
+      Serial.println(" Driving!");   
+  }
+  
 }
 
 

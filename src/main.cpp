@@ -23,7 +23,6 @@ bool isMoving = false;
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
-
 void initSPIFFS() {
   if (!SPIFFS.begin()) {
     Serial.println("An error has occurred while mounting SPIFFS");
@@ -59,17 +58,17 @@ void setup(){
   // Serial port for debugging purposes
   Serial.begin(115200);
 
-  initL298N();
+  //initL298N();
   initSPIFFS();
+  initServoLib();
   //initWiFiSTA();
   initWifiAP();
   initWebSocket();
+
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
   });
-
   server.serveStatic("/", SPIFFS, "/");
-
   server.onNotFound(notFound);
   server.begin();
 
@@ -77,7 +76,7 @@ void setup(){
 
 void loop() {
   ws.cleanupClients();
-
-  runMotor();
+  runButlerMotor();
+  //runMotor();
   
 }
