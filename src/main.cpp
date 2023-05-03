@@ -15,6 +15,8 @@ const int MotorA2 = 18;
 const int MotorB1 = 19;
 const int MotorB2 = 23;
 
+const int lineSensor1 = 16;
+
 int rawIntData[4];
 
 int A1PWM, A2PWM, B1PWM, B2PWM;

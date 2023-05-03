@@ -50,8 +50,15 @@ void runButlerMotor(){
   }
 
   else {
-      leftMotor = isForward + isTurn;
-      rightMotor = isForward - isTurn;
+      if(isForward > 0){
+        leftMotor = isForward + isTurn;
+        rightMotor = isForward - isTurn;
+      }
+      else{
+        leftMotor = isForward - isTurn;
+        rightMotor = isForward + isTurn;
+      }
+
       leftMotor = constrain(leftMotor, -100, 100);
       rightMotor = constrain(rightMotor, -100, 100);
       leftMotor = map(leftMotor, -100, 100, 60, 130);
