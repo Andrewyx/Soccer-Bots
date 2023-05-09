@@ -9,13 +9,7 @@
 
 #include "myasyncwebserver.h"
 #include "mymotor.h"
-
-const int MotorA1 = 4;
-const int MotorA2 = 18;
-const int MotorB1 = 19;
-const int MotorB2 = 23;
-
-const int lineSensor1 = 16;
+#include "mylinesensor.h"
 
 int rawIntData[4];
 
@@ -63,6 +57,7 @@ void setup(){
   //initL298N();
   initSPIFFS();
   initServoLib();
+  initLineSensor();
   //initWiFiSTA();
   initWifiAP();
   initWebSocket();
@@ -78,7 +73,7 @@ void setup(){
 
 void loop() {
   ws.cleanupClients();
-  runButlerMotor();
-  //runMotor();
+  //runButlerMotor();
+  runMotorWithLines();
   
 }

@@ -2,6 +2,13 @@
 #include <ESP32Servo.h>
 #include <math.h>
 #include "mymotor.h"
+#include "mylinesensor.h"
+
+const int MotorA1 = 4;
+const int MotorB1 = 19;
+
+const int MotorA2 = 18;
+const int MotorB2 = 23;
 
 int leftMotor, rightMotor;
 int isForward, isTurn;
@@ -27,10 +34,30 @@ void initServoLib(){
 
 }
 
+void runMotorWithLines(){
+    readLineSensor();
+
+    if(!lineCollData[0]){
+      leftServo.write(70);
+      rightServo.write(90);
+      delay(1000);
+    }
+    else if (!lineCollData[1]){
+      leftServo.write(90);
+      rightServo.write(70);
+      delay(1000);
+    }
+    else{
+      leftServo.write(70);
+      rightServo.write(70);
+    }
+}
+
 void runButlerMotor(){
   isForward = (int)(rawIntData[2] * sin(rawIntData[3]*PI/180));
   isTurn = (int)(rawIntData[2] * cos(rawIntData[3]*PI/180));
   
+  /*
   Serial.print("Cos: ");
   Serial.print(cos(rawIntData[3]*PI/180));
   Serial.print(" Speed: ");
@@ -41,12 +68,11 @@ void runButlerMotor(){
   Serial.print(isForward);
   Serial.print(" TurnVal: ");
   Serial.print(isTurn);
-  
+  */
     
   if (rawIntData[2] == 0){
     leftServo.write(90);
     rightServo.write(90);
-    Serial.println(" Not Driving");
   }
 
   else {
@@ -65,7 +91,6 @@ void runButlerMotor(){
       rightMotor = map(rightMotor, -100, 100, 60, 130);
       leftServo.write(leftMotor);
       rightServo.write(rightMotor);
-      Serial.println(" Driving!");   
   }
   
 }
@@ -87,7 +112,8 @@ void initL298N(){
 void calcMotor(){
   isForward = (int)(rawIntData[2] * sin(rawIntData[3]*PI/180));
   isTurn = (int)(rawIntData[2] * cos(rawIntData[3]*PI/180));
-  
+
+  /*
   Serial.print("Cos: ");
   Serial.print(cos(rawIntData[3]*PI/180));
   Serial.print(" Speed: ");
@@ -98,7 +124,7 @@ void calcMotor(){
   Serial.print(isForward);
   Serial.print(" TurnVal: ");
   Serial.println(isTurn);
-  
+  */
     
   if(rawIntData[2] == 0){
     A1PWM = 0;
