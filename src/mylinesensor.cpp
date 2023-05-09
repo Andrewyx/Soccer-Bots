@@ -1,21 +1,32 @@
 #include <Arduino.h>
 #include "mylinesensor.h"
 
-const int onBoardLED = 2;
-bool isBlocked = false;
+const int lineSensor1 = 18;
+const int lineSensor2 = 23;
+
+int lineCollData[2];
 
 void initLineSensor(){
+    pinMode(lineSensor2, INPUT);
     pinMode(lineSensor1, INPUT);
-    pinMode(onBoardLED, OUTPUT);
 
 }
 
 void readLineSensor() {
-    isBlocked = digitalRead(onBoardLED);
-    if (isBlocked){
-        digitalWrite(onBoardLED, HIGH);
+    if (digitalRead(lineSensor1)){
+        Serial.print("Object on RIGHT: TRUE");
+        lineCollData[0] = true;
     }
     else{
-        digitalWrite(onBoardLED, LOW);
+        Serial.print("Object on RIGHT: FALSE");
+        lineCollData[0] = false;
     }
+    if (digitalRead(lineSensor2)){
+        Serial.println(" Object on LEFT: TRUE");
+        lineCollData[1] = true;
+    }
+    else{
+        Serial.println(" Object on LEFT: FALSE");
+        lineCollData[1] = false;
+    }    
 }
