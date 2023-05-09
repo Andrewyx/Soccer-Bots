@@ -9,6 +9,7 @@
 
 #include "myasyncwebserver.h"
 #include "mymotor.h"
+#include "myultrasonic.h"
 
 const int MotorA1 = 4;
 const int MotorA2 = 18;
@@ -66,6 +67,7 @@ void setup(){
   //initWiFiSTA();
   initWifiAP();
   initWebSocket();
+  initUltrasonic();
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
@@ -79,6 +81,7 @@ void setup(){
 void loop() {
   ws.cleanupClients();
   runButlerMotor();
+  runUltrasonic();
   //runMotor();
   
 }
