@@ -9,10 +9,11 @@ float leftDistance;
 float rightDistance;
 unsigned long previousMillis = 0;
 int interval = 1;
-int interval2 = 1000;
+int interval2 = 200;
 int leftTrigState = LOW;
 int rightTrigState = LOW; //state of trigPin
 int printState = LOW;
+unsigned long currentMillis;
 
 void initUltrasonic() {
   pinMode(leftTrigPin, OUTPUT); 
@@ -22,21 +23,11 @@ void initUltrasonic() {
 }
 
 void runUltrasonic() {
-	unsigned long currentMillis = millis(); //time in milliseconds from which the code was started
+	currentMillis = millis(); //time in milliseconds from which the code was started
 	if (currentMillis-previousMillis >= interval) { //check "blink without delay" code
 		previousMillis = currentMillis;
-		if (leftTrigState == LOW){
-			(leftTrigState = HIGH);
-		}
-		else {
-			(leftTrigState = LOW);
-		}
-		if (rightTrigState == LOW){
-			(rightTrigState = HIGH);
-		}
-		else {
-			(rightTrigState = LOW);
-		}
+		leftTrigState = !leftTrigState;
+		rightTrigState = !rightTrigState;
 	}
 	// printing if statement
 	if (currentMillis-previousMillis >= interval2) { //check "blink without delay" code
@@ -48,23 +39,32 @@ void runUltrasonic() {
 			(printState = LOW);
 		}
 	}
-	digitalWrite(leftTrigPin,leftTrigState);
-	digitalWrite(rightTrigPin,rightTrigState);
+	if(leftTrigState == HIGH){
+		digitalWrite(leftTrigPin, HIGH);
+		delayMicroseconds(10);
+		digitalWrite(leftTrigPin, LOW);
+		leftTrigState = LOW;
+	}
+
+	if(rightTrigState == HIGH){
+		digitalWrite(rightTrigPin, HIGH);
+		delayMicroseconds(10);
+		digitalWrite(rightTrigPin, LOW);
+		rightTrigState = LOW;
+	}
 	int leftDuration,rightDuration; 
 	leftDuration = pulseIn(leftEchoPin,HIGH);
 	rightDuration = pulseIn(rightEchoPin,HIGH);
-  if (leftDuration > 1){
 	leftDistance = (leftDuration/2) / 29.1;
-  }
-  if (rightDuration > 1){
 	rightDistance = (rightDuration/2) / 29.1;
-  }
-	if (printState = HIGH){
+if (printState = HIGH){
     Serial.print("Left distance:");
   	Serial.println(leftDistance);
     Serial.print("Right distance:");
   	Serial.println(rightDistance);
 }
 
+//left ~130
+//right ~100
 
 }

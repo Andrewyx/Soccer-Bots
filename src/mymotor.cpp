@@ -3,6 +3,7 @@
 #include <math.h>
 #include "mymotor.h"
 #include "mylinesensor.h"
+#include "myultrasonic.h"
 
 const int MotorA1 = 4;
 const int MotorB1 = 19;
@@ -51,6 +52,10 @@ void runMotorWithLines(){
       leftServo.write(70);
       rightServo.write(70);
     }
+}
+
+void runMotorWithUltrasonic(){
+    runUltrasonic();
 }
 
 void runButlerMotor(){

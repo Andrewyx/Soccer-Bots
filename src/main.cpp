@@ -76,7 +76,6 @@ void setup(){
 void loop() {
   ws.cleanupClients();
   //runButlerMotor();
-  runMotorWithLines();
-  runUltrasonic();
-  
+  //runMotorWithLines();
+  runMotorWithUltrasonic();
 }

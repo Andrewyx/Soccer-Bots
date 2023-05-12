@@ -13,7 +13,7 @@ void initLineSensor(){
 }
 
 void readLineSensor() {
-    if (digitalRead(lineSensor1)){
+    if (!digitalRead(lineSensor1)){
         Serial.print("Object on RIGHT: TRUE");
         lineCollData[0] = true;
     }
@@ -21,7 +21,7 @@ void readLineSensor() {
         Serial.print("Object on RIGHT: FALSE");
         lineCollData[0] = false;
     }
-    if (digitalRead(lineSensor2)){
+    if (!digitalRead(lineSensor2)){
         Serial.println(" Object on LEFT: TRUE");
         lineCollData[1] = true;
     }

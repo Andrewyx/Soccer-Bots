@@ -5,7 +5,7 @@ extern bool isMoving;
 extern int A1PWM, A2PWM, B1PWM, B2PWM;
 extern int rawIntData[4];
 extern int lineCollData[2];
-
+extern float leftDistance, rightDistance;
 
 int DegreeInRadian(double x);
 void calcMotor();
@@ -15,5 +15,6 @@ void initL298N();
 void initServoLib();
 void runButlerMotor();
 void runMotorWithLines();
+void runMotorWithUltrasonic();
 
 #endif
