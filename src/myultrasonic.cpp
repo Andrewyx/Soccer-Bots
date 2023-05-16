@@ -41,6 +41,20 @@ double rightKalman(double U){
   return U_hat;
 }
 
+double midLineKalman(double U){
+  static const double forty = 40;
+  static const double floaty = 1.00;
+  static double teny = 10;
+  static double zero = 0;
+  static double zerozero = 0;
+  static double dangan = 0;
+  dangan = zero*floaty/(floaty*zero*floaty+forty);
+  zerozero += + dangan*(U-floaty*zerozero);
+  zero = (1-dangan*floaty)*zero+teny;
+  return zerozero;
+}
+
+
 void initUltrasonic() {
   pinMode(leftTrigPin, OUTPUT); 
   pinMode(leftEchoPin, INPUT); 
@@ -52,10 +66,13 @@ double midPointVal(double val1, double val2){
 	return (val1 + val2)/2;
 }
 
+void meanDistance(float dRight, float dLeft){
+	midLineKalman(midPointVal(-dRight, dLeft));
+}
+
 void runUltrasonic() {
 
 		digitalWrite(leftTrigPin, HIGH);
-
 		delayMicroseconds(10);
 		digitalWrite(leftTrigPin, LOW);
 		delayMicroseconds(2);
@@ -73,9 +90,6 @@ void runUltrasonic() {
 		Serial.print("Right distance:");
 		Serial.println(rightKalman(rightDistance));	
 
-		delay(500);
-
-
-
+		
 
 }
