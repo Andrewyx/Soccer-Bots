@@ -7,6 +7,8 @@ const int rightTrigPin = 25;
 const int rightEchoPin = 33;
 float leftDistance;
 float rightDistance;
+float cleanedLD, cleanedRD;
+
 unsigned long previousMillis = 0;
 int interval = 1;
 int interval2 = 200;
@@ -14,7 +16,6 @@ int leftTrigState = LOW;
 int rightTrigState = LOW; //state of trigPin
 unsigned long currentMillis;
 int leftDuration, rightDuration; 
-
 
 double leftKalman(double U){
   static const double F = 40;
@@ -79,7 +80,8 @@ void runUltrasonic() {
 		leftDuration = pulseIn(leftEchoPin,HIGH);
 		leftDistance = (leftDuration/2) / 29.1;
 		Serial.print("Left distance:");
-		Serial.println(leftKalman(leftDistance));
+    cleanedLD = leftKalman(leftDistance);
+    Serial.println(cleanedLD);
 
 		digitalWrite(rightTrigPin, HIGH);
 		delayMicroseconds(10);
@@ -88,8 +90,7 @@ void runUltrasonic() {
 		rightDuration = pulseIn(rightEchoPin,HIGH);
 		rightDistance = (rightDuration/2) / 29.1;	
 		Serial.print("Right distance:");
-		Serial.println(rightKalman(rightDistance));	
-
-		
-
+    cleanedRD = rightKalman(rightDistance);
+		Serial.println(cleanedRD);	
+    
 }

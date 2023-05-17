@@ -55,7 +55,24 @@ void runMotorWithLines(){
 }
 
 void runMotorWithUltrasonic(){
+    int toleranceVal = 20;
     runUltrasonic();
+    if(cleanedLD >= 1000 && cleanedRD >= 1000){
+      leftServo.write(70);
+      rightServo.write(90);      
+    }
+    else if(cleanedLD - cleanedRD > toleranceVal){
+      leftServo.write(65);
+      rightServo.write(70);       
+    }
+    else if(cleanedLD - cleanedRD < -toleranceVal){
+      leftServo.write(70);
+      rightServo.write(65); 
+    }
+    else{
+      leftServo.write(70);
+      rightServo.write(70);      
+    }
 }
 
 void runButlerMotor(){

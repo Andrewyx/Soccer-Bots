@@ -5,7 +5,8 @@ extern bool isMoving;
 extern int A1PWM, A2PWM, B1PWM, B2PWM;
 extern int rawIntData[4];
 extern int lineCollData[2];
-extern float leftDistance, rightDistance;
+extern float cleanedLD, cleanedRD;
+
 
 int DegreeInRadian(double x);
 void calcMotor();
