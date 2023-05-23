@@ -73,6 +73,14 @@ void runMotorWithUltrasonic(){
       leftServo.write(70);
       rightServo.write(70);      
     }
+    /*
+    if(deviationSlope > 0.01){
+
+    }
+    else if(deviationSlope < -0.01){
+
+    }
+    */
 }
 
 void runButlerMotor(){

@@ -3,11 +3,12 @@
 
 void initUltrasonic();
 void runUltrasonic();
-void meanDistance();
+float meanDistance(float dRight, float dLeft);
 double leftKalman(double U);
 double rightKalman(double U);
 double midLineKalman(double U);
-double midPointVal(double val1, double val2);
+float midPointVal(float val1, float val2);
+float linearReg(float inputVal); 
 
 
 #endif

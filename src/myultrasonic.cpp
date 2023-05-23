@@ -1,13 +1,22 @@
 #include <Arduino.h>
 #include "myultrasonic.h"
 
-const int leftTrigPin = 14;
-const int leftEchoPin = 27;
+//mathc this value with regListLen
+#define N 10
+
+const int leftTrigPin = 23;
+const int leftEchoPin = 18;
 const int rightTrigPin = 25;
 const int rightEchoPin = 33;
 float leftDistance;
 float rightDistance;
 float cleanedLD, cleanedRD;
+
+//Linear Regression Vars and Vals
+float x[N], y[N], sum_x = 0, sum_x2 = 0, sum_y = 0, sum_xy = 0, a, b;
+static unsigned int linearRegIndex = 0; 
+static int regListLen = 10;
+float deviationSlope = 0;
 
 unsigned long previousMillis = 0;
 int interval = 1;
@@ -63,34 +72,68 @@ void initUltrasonic() {
   pinMode(rightEchoPin, INPUT); 
 }
 
-double midPointVal(double val1, double val2){
+float midPointVal(float val1, float val2){
 	return (val1 + val2)/2;
 }
 
-void meanDistance(float dRight, float dLeft){
-	midLineKalman(midPointVal(-dRight, dLeft));
+float meanDistance(float dRight, float dLeft){
+	return midLineKalman(midPointVal(-dRight, dLeft));
+}
+
+float linearReg(float inputVal){
+  
+  //change this to alter amount of sample points
+  x[linearRegIndex] = linearRegIndex;
+  y[linearRegIndex] = inputVal;
+  /* Calculating Required Sum */
+ 
+  /* Calculating a and b */
+
+  if(linearRegIndex < regListLen){
+    linearRegIndex += 1;
+  }
+  else{
+    for(int i = 0;i < regListLen;i++){
+        sum_x = sum_x + x[i];
+        sum_x2 = sum_x2 + x[i]*x[i];
+        sum_y = sum_y + y[i];
+        sum_xy = sum_xy + x[i]*y[i];
+    }
+    b = (regListLen * sum_xy - sum_x * sum_y) / (regListLen * sum_x2 - sum_x * sum_x);    
+    linearRegIndex = 0;
+    
+  }
+  Serial.print(" Slope Val: ");
+  Serial.println(b); 
+  return b;
+  //this one is useless
+  //a = (sum_y - b * sum_x) / n;
 }
 
 void runUltrasonic() {
 
+		digitalWrite(leftTrigPin, LOW);
+		delayMicroseconds(2);
 		digitalWrite(leftTrigPin, HIGH);
 		delayMicroseconds(10);
 		digitalWrite(leftTrigPin, LOW);
-		delayMicroseconds(2);
 		leftDuration = pulseIn(leftEchoPin,HIGH);
 		leftDistance = (leftDuration/2) / 29.1;
 		Serial.print("Left distance:");
     cleanedLD = leftKalman(leftDistance);
-    Serial.println(cleanedLD);
+    Serial.print(cleanedLD);
 
+		digitalWrite(rightTrigPin, LOW);	
+		delayMicroseconds(2);
 		digitalWrite(rightTrigPin, HIGH);
 		delayMicroseconds(10);
 		digitalWrite(rightTrigPin, LOW);	
-		delayMicroseconds(2);
 		rightDuration = pulseIn(rightEchoPin,HIGH);
 		rightDistance = (rightDuration/2) / 29.1;	
-		Serial.print("Right distance:");
+		Serial.print(" Right distance:");
     cleanedRD = rightKalman(rightDistance);
-		Serial.println(cleanedRD);	
+		Serial.print(cleanedRD);	
+
+    deviationSlope = linearReg(meanDistance(cleanedRD, cleanedLD));
     
 }

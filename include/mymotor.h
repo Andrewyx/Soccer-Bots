@@ -6,6 +6,7 @@ extern int A1PWM, A2PWM, B1PWM, B2PWM;
 extern int rawIntData[4];
 extern int lineCollData[2];
 extern float cleanedLD, cleanedRD;
+extern float deviationSlope;
 
 
 int DegreeInRadian(double x);
