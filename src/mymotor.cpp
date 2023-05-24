@@ -57,65 +57,38 @@ void runMotorWithLines(){
 void runMotorWithUltrasonic(){
     int toleranceVal = 20;
     runUltrasonic();
-    turnLeft();
-    /*
-    if(cleanedFD < toleranceVal)
-    {
-      if (cleanedRD - cleanedLD > toleranceVal)
-      {
+    if (cleanedFD > 20){
+  	  if(cleanedLD >= 1000 && cleanedRD >= 1000){
         leftServo.write(90);
-        rightServo.write(70);  
+        rightServo.write(70); 
       }
-      else if (cleanedLD - cleanedRD > toleranceVal)
-      {
-        leftServo.write(90);
-        rightServo.write(70);  
+      else if(cleanedLD - cleanedRD > toleranceVal){
+        turnLeft();      
       }
-      else if (cleanedLD || cleanedRD > 1000)
-      {
-        leftServo.write(90);
-        rightServo.write(70);  
+      else if(cleanedLD - cleanedRD < -toleranceVal){
+        turnRight();
+      }
+      else{
+        goForward();  
       }
     }
-
     else
     {
-      if (cleanedRD > 1000)
+      if (cleanedRD > cleanedLD)
+      {
+        leftServo.write(70);
+        rightServo.write(90); 
+      }
+      if (cleanedLD > cleanedRD)
       {
         leftServo.write(90);
-        rightServo.write(70);  
+        rightServo.write(70); 
       }
-
-      if (cleanedLD > 1000)
-      {
-        leftServo.write(70);
-        rightServo.write(90);  
-      }
-
-      else
-      {
-        leftServo.write(70);
-        rightServo.write(70);  
+      if(cleanedLD >= 1000 && cleanedRD >= 1000){
+        leftServo.write(90);
+        rightServo.write(70); 
       }
     }
-
-    /*if(cleanedLD >= 1000 && cleanedRD >= 1000){
-      leftServo.write(70);
-      rightServo.write(90);      
-    }
-    else if(cleanedLD - cleanedRD > toleranceVal){
-      leftServo.write(65);
-      rightServo.write(70);       
-    }
-    else if(cleanedLD - cleanedRD < -toleranceVal){
-      leftServo.write(70);
-      rightServo.write(65); 
-    }
-    else{
-      leftServo.write(70);
-      rightServo.write(70);      
-    }
-    */
 
     /*
     if(deviationSlope > 0.01){
@@ -135,13 +108,13 @@ void goForward()
 }
 void turnLeft()
 {
-  leftServo.write(70);
-  rightServo.write(90); 
+  leftServo.write(65);
+  rightServo.write(70); 
 }
 void turnRight()
 {
-  leftServo.write(90);
-  rightServo.write(70); 
+  leftServo.write(70);
+  rightServo.write(65); 
 }
 void halt()
 {
