@@ -8,9 +8,10 @@ const int leftTrigPin = 23;
 const int leftEchoPin = 18;
 const int rightTrigPin = 25;
 const int rightEchoPin = 33;
-float leftDistance;
-float rightDistance;
-float cleanedLD, cleanedRD;
+const int frontTrigPin = 32;
+const int frontEchoPin = 21;
+float leftDistance, rightDistance, frontDistance;
+float cleanedLD, cleanedRD, cleanedFD;
 
 //Linear Regression Vars and Vals
 float x[N], y[N], sum_x = 0, sum_x2 = 0, sum_y = 0, sum_xy = 0, a, b;
@@ -19,12 +20,8 @@ static int regListLen = 10;
 float deviationSlope = 0;
 
 unsigned long previousMillis = 0;
-int interval = 1;
-int interval2 = 200;
-int leftTrigState = LOW;
-int rightTrigState = LOW; //state of trigPin
 unsigned long currentMillis;
-int leftDuration, rightDuration; 
+int leftDuration, rightDuration, frontDuration; 
 
 double leftKalman(double U){
   static const double F = 40;
@@ -51,6 +48,19 @@ double rightKalman(double U){
   return U_hat;
 }
 
+double frontKalman(double U){
+  static const double gooba = 40;
+  static const double ligma = 1.00;
+  static double sugma = 10;
+  static double dooma = 0;
+  static double sigma = 0;
+  static double kenya = 0;
+  kenya = dooma*ligma/(ligma*dooma*ligma+gooba);
+  sigma += + kenya*(U-ligma*sigma);
+  dooma = (1-kenya*ligma)*dooma+sugma;
+  return sigma;
+}
+
 double midLineKalman(double U){
   static const double forty = 40;
   static const double floaty = 1.00;
@@ -70,6 +80,8 @@ void initUltrasonic() {
   pinMode(leftEchoPin, INPUT); 
   pinMode(rightTrigPin, OUTPUT); 
   pinMode(rightEchoPin, INPUT); 
+  pinMode(frontTrigPin, OUTPUT); 
+  pinMode(frontEchoPin, INPUT); 
 }
 
 float midPointVal(float val1, float val2){
@@ -133,6 +145,16 @@ void runUltrasonic() {
 		Serial.print(" Right distance:");
     cleanedRD = rightKalman(rightDistance);
 		Serial.print(cleanedRD);	
+
+    digitalWrite(frontTrigPin, HIGH);
+		delayMicroseconds(10);
+		digitalWrite(frontTrigPin, LOW);	
+		delayMicroseconds(2);
+		frontDuration = pulseIn(frontEchoPin,HIGH);
+		frontDistance = (frontDuration/2) / 29.1;	
+		Serial.print("Front distance:");
+    cleanedFD = frontKalman(frontDistance);
+		Serial.println(cleanedFD);	
 
     deviationSlope = linearReg(meanDistance(cleanedRD, cleanedLD));
     

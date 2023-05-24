@@ -57,7 +57,49 @@ void runMotorWithLines(){
 void runMotorWithUltrasonic(){
     int toleranceVal = 20;
     runUltrasonic();
-    if(cleanedLD >= 1000 && cleanedRD >= 1000){
+    turnLeft();
+    /*
+    if(cleanedFD < toleranceVal)
+    {
+      if (cleanedRD - cleanedLD > toleranceVal)
+      {
+        leftServo.write(90);
+        rightServo.write(70);  
+      }
+      else if (cleanedLD - cleanedRD > toleranceVal)
+      {
+        leftServo.write(90);
+        rightServo.write(70);  
+      }
+      else if (cleanedLD || cleanedRD > 1000)
+      {
+        leftServo.write(90);
+        rightServo.write(70);  
+      }
+    }
+
+    else
+    {
+      if (cleanedRD > 1000)
+      {
+        leftServo.write(90);
+        rightServo.write(70);  
+      }
+
+      if (cleanedLD > 1000)
+      {
+        leftServo.write(70);
+        rightServo.write(90);  
+      }
+
+      else
+      {
+        leftServo.write(70);
+        rightServo.write(70);  
+      }
+    }
+
+    /*if(cleanedLD >= 1000 && cleanedRD >= 1000){
       leftServo.write(70);
       rightServo.write(90);      
     }
@@ -73,6 +115,8 @@ void runMotorWithUltrasonic(){
       leftServo.write(70);
       rightServo.write(70);      
     }
+    */
+
     /*
     if(deviationSlope > 0.01){
 
@@ -81,6 +125,28 @@ void runMotorWithUltrasonic(){
 
     }
     */
+    
+}
+
+void goForward()
+{
+  leftServo.write(70);
+  rightServo.write(70); 
+}
+void turnLeft()
+{
+  leftServo.write(70);
+  rightServo.write(90); 
+}
+void turnRight()
+{
+  leftServo.write(90);
+  rightServo.write(70); 
+}
+void halt()
+{
+  leftServo.write(90);
+  rightServo.write(90); 
 }
 
 void runButlerMotor(){
