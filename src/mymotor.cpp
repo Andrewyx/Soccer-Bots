@@ -55,50 +55,37 @@ void runMotorWithLines(){
 }
 
 void runMotorWithUltrasonic(){
-    int toleranceVal = 20;
+    int toleranceVal = 40;
+    int frontTolerance = 150;
+    int peripheralDiff =  cleanedLD - cleanedRD;
     runUltrasonic();
-    if (cleanedFD > 20){
-  	  if(cleanedLD >= 1000 && cleanedRD >= 1000){
-        leftServo.write(90);
-        rightServo.write(70); 
-      }
-      else if(cleanedLD - cleanedRD > toleranceVal){
-        turnLeft();      
-      }
-      else if(cleanedLD - cleanedRD < -toleranceVal){
-        turnRight();
-      }
-      else{
-        goForward();  
-      }
+    if (cleanedFD < frontTolerance && cleanedRD >= 1000 && cleanedLD >= 1000){
+      turnLeft();
+      delay(1000);
     }
-    else
-    {
-      if (cleanedRD > cleanedLD)
-      {
-        leftServo.write(70);
-        rightServo.write(90); 
-      }
-      if (cleanedLD > cleanedRD)
-      {
-        leftServo.write(90);
-        rightServo.write(70); 
-      }
-      if(cleanedLD >= 1000 && cleanedRD >= 1000){
-        leftServo.write(90);
-        rightServo.write(70); 
-      }
+    else if(cleanedFD < frontTolerance && peripheralDiff < -toleranceVal){
+      //turn left
+      leftServo.write(70 + (10 - constrain(peripheralDiff, 0, 10)));
+      rightServo.write(90 + (10 - constrain(peripheralDiff, 0, 10)));
     }
+    else if (cleanedFD < 70 && peripheralDiff > toleranceVal){
+      //turn right
+      rightServo.write(70 + constrain(peripheralDiff, 0, 10));
+      leftServo.write(90 + constrain(peripheralDiff, 0, 10));
+    }
+    else if(peripheralDiff < -toleranceVal){
 
-    /*
-    if(deviationSlope > 0.01){
-
+      leftServo.write(70 + (5 - constrain(peripheralDiff, 0, 5)));
+      rightServo.write(70 - (5 - constrain(peripheralDiff, 0, 5)));
     }
-    else if(deviationSlope < -0.01){
-
-    }
-    */
-    
+    else if (peripheralDiff > toleranceVal){
+      rightServo.write(70 + constrain(peripheralDiff, 0, 5));
+      leftServo.write(70 - constrain(peripheralDiff, 0, 5));
+    }    
+    else{
+      leftServo.write(70);
+      rightServo.write(70);
+    }    
 }
 
 void goForward()
