@@ -12,6 +12,9 @@
 #include "mylinesensor.h"
 #include "myultrasonic.h"
 
+//go to mymotor.cpp to change pins and stuff
+//change your wifi password down below
+//upload flash image via PLATFORM.IO/SPIFFS before uploading this code
 int rawIntData[4];
 
 int A1PWM, A2PWM, B1PWM, B2PWM;
@@ -28,8 +31,11 @@ void initSPIFFS() {
 }
 
 void initWifiAP(){
-  const char* ssid = "AYM";
-  const char* password = "andrewsboard";
+
+  //change the below ssid and password to your own custom values
+  const char* ssid = "VALENCIA";
+  const char* password = "elx123456789";
+
   // Connect to Wi-Fi
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid, password);
@@ -39,6 +45,8 @@ void initWifiAP(){
 }
 
 void initWiFiSTA() {
+
+  //dont activate this unless you want a station connection, the AP (access point) method is a lot better for soccer bots
   const char* ssid = "McRoberts_Guest";
   const char* password = "mcrob6600";  
   WiFi.mode(WIFI_STA);
@@ -55,14 +63,16 @@ void setup(){
   // Serial port for debugging purposes
   Serial.begin(115200);
 
-  //initL298N();
+  initL298N();
   initSPIFFS();
-  initServoLib();
-  initLineSensor();
-  //initWiFiSTA();
   initWifiAP();
   initWebSocket();
-  initUltrasonic();
+
+  //initServoLib();
+  //initLineSensor();
+  //initWiFiSTA();
+  //initUltrasonic();
+  //these commented out lines are for an autonomous butler bot project. DO NOT COMMENT THEM IN
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html", "text/html");
@@ -75,7 +85,5 @@ void setup(){
 
 void loop() {
   ws.cleanupClients();
-  //runButlerMotor();
-  //runMotorWithLines();
-  runMotorWithUltrasonic();
+  runMotor();
 }

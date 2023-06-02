@@ -5,10 +5,17 @@
 #include "mylinesensor.h"
 #include "myultrasonic.h"
 
+//These are the ESP32 pins for the Soccer Bot Motor
+//make sure to jump EN pins OR THIS WILL NOT WORK
+
+//IN4 goes to D4
 const int MotorA1 = 4;
+//IN1 to D19
 const int MotorB1 = 19;
 
+//IN3 to D18
 const int MotorA2 = 18;
+//IN2 to D23
 const int MotorB2 = 23;
 
 int leftMotor, rightMotor;
@@ -196,7 +203,29 @@ void calcMotor(){
 
   if (isMoving){
 
-    if(isForward < 0 && isTurn > 0){
+    if (rawIntData[3] <= 15 || rawIntData[3] >= 345){
+      leftMotor = abs(isForward) + abs(isTurn);
+      rightMotor = abs(isForward) + abs(isTurn);
+      leftMotor = constrain(leftMotor, 0, 100);
+      rightMotor = constrain(rightMotor, 0, 100);
+      A2PWM = map(leftMotor, 0, 100, 0, 255);
+      A1PWM = 0;
+      B2PWM = 0; 
+      B1PWM = map(rightMotor, 0, 100, 0, 255);
+              
+    }
+    else if (rawIntData[3] >= 165 && rawIntData[3] <= 195){
+      leftMotor = abs(isForward) + abs(isTurn);
+      rightMotor = abs(isForward) + abs(isTurn);
+      leftMotor = constrain(leftMotor, 0, 100);
+      rightMotor = constrain(rightMotor, 0, 100);
+      A2PWM = 0;
+      A1PWM = map(leftMotor, 0, 100, 0, 255);
+      B2PWM = map(rightMotor, 0, 100, 0, 255);
+      B1PWM = 0;         
+    }    
+
+    else if(isForward < 0 && isTurn > 0){
       leftMotor = abs(isForward) + abs(isTurn);
       rightMotor = abs(isForward);
       leftMotor = constrain(leftMotor, 0, 100);
