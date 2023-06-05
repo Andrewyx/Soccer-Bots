@@ -62,7 +62,7 @@ window.addEventListener('load', () => {
 var width, height, radius, x_orig, y_orig;
 function resize() {
     width = window.innerWidth;
-    radius = 250;
+    radius = 0.30* canvas.width;
     height = radius * 6.5;
     ctx.canvas.width = width;
     ctx.canvas.height = height;

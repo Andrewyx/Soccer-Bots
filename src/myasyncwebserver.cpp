@@ -9,15 +9,16 @@
 
 #include "myasyncwebserver.h"
 
+//if you want to change the User Interface, go to the data folder and modify the HTML code
 
 void notFound(AsyncWebServerRequest *request) {
   request->send(404, "text/plain", "Not found");
 }
-//use this
+
+//This is the webserver data deserialization region
 void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
              void *arg, uint8_t *data, size_t len) {
 
-      //std::istream jsonString(data);
       Json::Reader reader;
       Json::Value cleanedData; 
       char* dataAsString = (char*)data; 
@@ -55,6 +56,7 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
   }
 }
 
+//webserver initialization in setup
 void initWebSocket() {
   ws.onEvent(onEvent);
   server.addHandler(&ws);

@@ -6,6 +6,8 @@ const int lineSensor2 = 23;
 
 int lineCollData[2];
 
+//You are NOT in the right file, unless you are working on butler bots and want to use a line sensor
+
 void initLineSensor(){
     pinMode(lineSensor2, INPUT);
     pinMode(lineSensor1, INPUT);

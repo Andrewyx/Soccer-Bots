@@ -1,7 +1,6 @@
 #ifndef MYMOTOR_H
 #define MYMOTOR_H
 
-extern bool isMoving;
 extern int A1PWM, A2PWM, B1PWM, B2PWM;
 extern int rawIntData[4];
 extern int lineCollData[2];

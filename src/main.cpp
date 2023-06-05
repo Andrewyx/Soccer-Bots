@@ -14,11 +14,13 @@
 
 //go to mymotor.cpp to change pins and stuff
 //change your wifi password down below
-//upload flash image via PLATFORM.IO/SPIFFS before uploading this code
+//upload flash image via PLATFORM.IO/SPIFFS before uploading this
+//control + click any functions to see its definition in VSCode
+
+
 int rawIntData[4];
 
 int A1PWM, A2PWM, B1PWM, B2PWM;
-bool isMoving = false;
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
@@ -33,8 +35,8 @@ void initSPIFFS() {
 void initWifiAP(){
 
   //change the below ssid and password to your own custom values
-  const char* ssid = "VALENCIA";
-  const char* password = "elx123456789";
+  const char* ssid = "AYM";
+  const char* password = "andrewsboard";
 
   // Connect to Wi-Fi
   WiFi.mode(WIFI_AP);
@@ -67,6 +69,7 @@ void setup(){
   initSPIFFS();
   initWifiAP();
   initWebSocket();
+  //These lines are for the soccer bot
 
   //initServoLib();
   //initLineSensor();

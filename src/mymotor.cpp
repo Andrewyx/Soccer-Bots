@@ -18,9 +18,13 @@ const int MotorA2 = 18;
 //IN2 to D23
 const int MotorB2 = 23;
 
+bool isMoving = false;
 int leftMotor, rightMotor;
 int isForward, isTurn;
 Servo leftServo, rightServo;
+
+//DO NOT mess with the code below unless you are working on autonomous butler bots
+#pragma region ButlerBot
 
 int DegreeInRadian(double x){
   return x * (3.1415/180);;
@@ -158,7 +162,10 @@ void runButlerMotor(){
   
 }
 
+#pragma endregion ButlerBot
 
+//Below is where you want to stay to make Soccer Bots
+#pragma region SoccerBot
 
 void initL298N(){
   pinMode(MotorA1, OUTPUT);
@@ -177,6 +184,9 @@ void calcMotor(){
   isTurn = (int)(rawIntData[2] * cos(rawIntData[3]*PI/180));
 
   /*
+
+  //this code is to display website readings in the serial to debug
+
   Serial.print("Cos: ");
   Serial.print(cos(rawIntData[3]*PI/180));
   Serial.print(" Speed: ");
@@ -276,10 +286,12 @@ void printMotorValues(){
 }
 
 void runMotor(){
-  calcMotor();
+    calcMotor();
   //printMotorValues();
   analogWrite(MotorA1, A1PWM);
   analogWrite(MotorA2, A2PWM);
   analogWrite(MotorB1, B1PWM);
   analogWrite(MotorB2, B2PWM);  
 } 
+
+#pragma endregion SoccerBot

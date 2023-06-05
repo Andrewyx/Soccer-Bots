@@ -1,9 +1,12 @@
 #include <Arduino.h>
 #include "myultrasonic.h"
 
-//mathc this value with regListLen
+//THIS FILE IS MEANT FOR BUTLER BOTS, NOT SOCCER BOTS
+
+//match this value with regListLen
 #define N 10
 
+//This is meant for tri HC-SR04 Ultrasonic Sensor Array to autonomously navigate
 const int leftTrigPin = 23;
 const int leftEchoPin = 18;
 const int rightTrigPin = 25;
@@ -13,7 +16,7 @@ const int frontEchoPin = 21;
 float leftDistance, rightDistance, frontDistance;
 float cleanedLD, cleanedRD, cleanedFD;
 
-//Linear Regression Vars and Vals
+//Linear Regression Vars and Vals to clean up data
 float x[N], y[N], sum_x = 0, sum_x2 = 0, sum_y = 0, sum_xy = 0, a, b;
 static unsigned int linearRegIndex = 0; 
 static int regListLen = 10;
@@ -22,6 +25,9 @@ float deviationSlope = 0;
 unsigned long previousMillis = 0;
 unsigned long currentMillis;
 int leftDuration, rightDuration, frontDuration; 
+
+//filters to clean sensor readings
+#pragma region KalmanFilters
 
 double leftKalman(double U){
   static const double F = 40;
@@ -74,15 +80,9 @@ double midLineKalman(double U){
   return zerozero;
 }
 
+#pragma endregion KalmanFilters
 
-void initUltrasonic() {
-  pinMode(leftTrigPin, OUTPUT); 
-  pinMode(leftEchoPin, INPUT); 
-  pinMode(rightTrigPin, OUTPUT); 
-  pinMode(rightEchoPin, INPUT); 
-  pinMode(frontTrigPin, OUTPUT); 
-  pinMode(frontEchoPin, INPUT); 
-}
+#pragma region LinearRegressionMethods
 
 float midPointVal(float val1, float val2){
 	return (val1 + val2)/2;
@@ -122,6 +122,19 @@ float linearReg(float inputVal){
   //a = (sum_y - b * sum_x) / n;
 }
 
+#pragma endregion LinearRegressionMethods
+
+#pragma region Functionality
+
+void initUltrasonic() {
+  pinMode(leftTrigPin, OUTPUT); 
+  pinMode(leftEchoPin, INPUT); 
+  pinMode(rightTrigPin, OUTPUT); 
+  pinMode(rightEchoPin, INPUT); 
+  pinMode(frontTrigPin, OUTPUT); 
+  pinMode(frontEchoPin, INPUT); 
+}
+
 void runUltrasonic() {
 
 		digitalWrite(leftTrigPin, LOW);
@@ -159,3 +172,5 @@ void runUltrasonic() {
     deviationSlope = linearReg(meanDistance(cleanedRD, cleanedLD));
     
 }
+
+#pragma endregion Functionality

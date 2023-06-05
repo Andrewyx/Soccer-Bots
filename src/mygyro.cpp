@@ -7,7 +7,9 @@
 #include <Adafruit_Sensor.h>
 
 #include "mygyro.h"
-
+//mygryo is meant for a MPU6050 9 Direction Gyroscope/Accelerometer. 
+//This might be hand if you plan on anything needing stabilization
+//To use, place
 float RateRoll, RatePitch, RateYaw;
 float RateCalibrationRoll, RateCalibrationPitch, RateCalibrationYaw;
 int RateCalibrationNumber;
@@ -21,6 +23,8 @@ float KalmanAngleYaw=0, KalmanUncertaintyAngleYaw=2*2;
 float Kalman1DOutput[]={0,0};
 
 extern Adafruit_MPU6050 mpu;
+
+#pragma region Gyro_Calculations
 
 void kalman_1d(float KalmanState, float KalmanUncertainty, float KalmanInput, float KalmanMeasurement) {
   KalmanState=KalmanState+0.004*KalmanInput;
@@ -72,6 +76,12 @@ void gyro_signals(void) {
   AnglePitch=-atan(AccX/sqrt(AccY*AccY+AccZ*AccZ))*1/(3.142/180);
   AngleYaw = atan(AccZ/sqrt(AccX*AccX+AccZ*AccZ))*1/(3.142/180);
 }
+
+#pragma endregion Gyro_Calculations
+
+
+//Below is the important region containing functions you can call
+#pragma region Public_Gyroscope_Region
 
 void initgyro(){
   Wire.setClock(400000);
@@ -128,3 +138,5 @@ void printGYRO(){
   Serial.print(" Acceleration Z [g]= ");
   Serial.println(AccZ);
 }
+
+#pragma endregion Public_Gyroscope_Region
