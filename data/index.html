@@ -1,37 +1,49 @@
-<!DOCTYPE HTML><html>
-  <head>
-    <title>ESP32 ROBOT Web Server</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet">
+<!DOCTYPE HTML>
+<html>
 
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
-    <script src="https://kit.fontawesome.com/f0601b0fb2.js" crossorigin="anonymous"></script>
-    <script type='module' src='https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js'></script>
-    <script nomodule='' src='https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js'></script>
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1">    
+<head>
+  <title>ESP32 ROBOT Web Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, overflow:hidden">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Righteous&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap" rel="stylesheet">
 
-  </head>
-  <div class="container">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/f0601b0fb2.js" crossorigin="anonymous"></script>
+  <script type='module' src='https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js'></script>
+  <script nomodule='' src='https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js'></script>
 
-    <body>
-      <h1>ESP32 ROBOT Web Server</h1>
 
-      <p style="text-align: center;">
-          X: <span id="x_coordinate"> </span>
-          Y: <span id="y_coordinate"> </span>
-          Speed: <span id="speed"> </span> %
-          Angle: <span id="angle"> </span>
-      </p>
+</head>
 
-      <canvas id="canvas" name="game"></canvas>
+  <body>
+    <div class="container">
+      <div class="titlebox">
+        <div class="text">
+          <span class="maintitle">ESP32 Soccer Bot</span><br>
+          <span class="controlpaneltext">Control Panel</span>
+        </div>
+      </div>  
 
+      <div class="inlaybox">
+          <div class="coords">
+            <p>
+              X: <span id="x_coordinate"> </span>
+              Y: <span id="y_coordinate"> </span>
+              Speed: <span id="speed"> </span> 
+              Angle: <span id="angle"> </span>
+            </p>
+          </div>        
+          <canvas id="canvas" name="game"></canvas>
+      </div>
+      
+
+      <div class="watermark"><span>Andrew Mao 2023</span></div>
+
+      
       <script src="script.js"></script>
 
-    </body>
-  </div>
+    </div>
+  </body>
+
 </html>

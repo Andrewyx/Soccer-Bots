@@ -39,7 +39,8 @@ var canvas, ctx;
 window.addEventListener('load', () => {
 
     canvas = document.getElementById('canvas');
-    ctx = canvas.getContext('2d');          
+    ctx = canvas.getContext('2d');        
+    
     resize(); 
 
     document.addEventListener('mousedown', startDrawing);
@@ -61,19 +62,19 @@ window.addEventListener('load', () => {
 
 var width, height, radius, x_orig, y_orig;
 function resize() {
+    
     width = window.innerWidth;
     radius = 0.30* canvas.width;
     height = radius * 6.5;
     ctx.canvas.width = width;
     ctx.canvas.height = height;
-    background();
+    background(); 
     joystick(width / 2, height / 3);
 }
 
 function background() {
     x_orig = width / 2;
     y_orig = height / 3;
-
     ctx.beginPath();
     ctx.arc(x_orig, y_orig, radius + 20, 0, Math.PI * 2, true);
     ctx.fillStyle = '#ECE5E5';

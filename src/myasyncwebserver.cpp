@@ -40,8 +40,8 @@ void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType 
         Json::Value yValue = cleanedData["y"];
         Json::Value speedValue = cleanedData["speed"];
         Json::Value angleValue = cleanedData["angle"];
-        //Serial.printf("[%u] X: [%d] Y:[%d] Speed:[%d] Angle[%d]\n", client, xValue.asInt(), 
-        //      yValue.asInt(), speedValue.asInt(), angleValue.asInt());
+        Serial.printf("[%u] X: [%d] Y:[%d] Speed:[%d] Angle[%d]\n", client, xValue.asInt(), 
+              yValue.asInt(), speedValue.asInt(), angleValue.asInt());
         rawIntData[0] = xValue.asInt();
         rawIntData[1] = yValue.asInt();
         rawIntData[2] = speedValue.asInt();

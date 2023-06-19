@@ -12,6 +12,7 @@
 #include "mylinesensor.h"
 #include "myultrasonic.h"
 
+//This build was using the Firebeetle ESP32 board type
 //go to mymotor.cpp to change pins and stuff
 //change your wifi password down below
 //upload flash image via PLATFORM.IO/SPIFFS before uploading this
@@ -34,14 +35,15 @@ void initSPIFFS() {
 
 void initWifiAP(){
 
-  //change the below ssid and password to your own custom values
-  const char* ssid = "AYM";
-  const char* password = "andrewsboard";
+  //change the below ssid and password to your own custom wifi values
+  const char* ssid = "exampleSSID";
+  //min like 8 characters for the pw
+  const char* password = "12345678";
 
   // Connect to Wi-Fi
   WiFi.mode(WIFI_AP);
   WiFi.softAP(ssid, password);
-  // Print ESP Local IP Address
+  // Print ESP Local IP Address 
   Serial.println(WiFi.softAPIP()); 
 
 }
