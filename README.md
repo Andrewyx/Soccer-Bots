@@ -1,4 +1,4 @@
-![image](https://github.com/Andrewyx/Soccer-Bots/assets/72371419/e18146f2-7ecb-4a88-b530-f78e7331e05d)# Soccer Bots
+# Soccer Bots
  Complete project file for autonomous soccer bots
 
 Download and run the AsyncServer folder for the most recent project file.
